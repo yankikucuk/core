@@ -39,7 +39,9 @@ def install():
     pisitools.dodir("/etc/env.d")
     shelltools.echo("%s/etc/env.d/50guile" % get.installDIR(), 'GUILE_LOAD_PATH="/usr/share/guile/%s"' % major)
     
-    pisitools.dosed("%s/usr/lib/libguile-3.0.so.1.7.0-gdb.scm" % get.installDIR(), "/var/pisi/guile-3.0.10-9/install", "")
+    # The gdb auto-load script embeds the build-time install directory;
+    # strip it so the shipped file points at /usr/lib.
+    pisitools.dosed("%s/usr/lib/libguile-3.0.so.*-gdb.scm" % get.installDIR(), get.installDIR(), "")
     pisitools.domove("/usr/lib/libguile-3.0.so.*.scm", "/usr/share/gdb/auto-load/usr/lib")
 
     pisitools.dodoc("AUTHORS", "ChangeLog", "HACKING", "NEWS", "README", "THANKS")
