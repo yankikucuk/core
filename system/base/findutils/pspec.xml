@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>GNU utilities to find files</Summary>
         <Description>The GNU Find Utilities are the basic directory searching utilities of the GNU operating system. These programs are typically used in conjunction with other programs to provide modular and powerful directory search and file locating capabilities to other commands.</Description>
-        <Archive sha1sum="aa0646445da9aba2ab7823d7298f3a9a40a6b6ad" type="tarxz">http://ftp.gnu.org/pub/gnu/findutils/findutils-4.10.0.tar.xz</Archive>
+        <Archive sha1sum="e9904d7bd0f1196db19f9a30c4e408a16ffd0e96" type="tarxz">http://ftp.gnu.org/pub/gnu/findutils/findutils-4.11.0.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>gettext</Dependency>
             <Dependency>texinfo</Dependency>
@@ -23,8 +23,6 @@
             <Patch level="1">findutils-fedora-4.5.13-warnings.patch</Patch>
             <Patch level="1">findutils-fedora-4.6.0-leaf-opt.patch</Patch>
             <Patch level="1">findutils-fedora-4.6.0-test-lock.patch</Patch>
-            <Patch level="1">findutils-fedora-4.9.0-ignore_readdir_race-symlink_loop.patch</Patch> -->
-<!--             <Patch level="1">findutils-4.7.0-root-tests.patch</Patch> -->
         </Patches>
     </Source>
 
@@ -43,6 +41,13 @@
     </Package>
 
     <History>
+        <Update release="9">
+            <Date>2026-09-23</Date>
+            <Version>4.11.0</Version>
+            <Comment>Version bump to 4.11.0. Fedora patches refreshed from Fedora rawhide; the 4.9.0 ignore_readdir_race patch is merged upstream.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="8">
             <Date>2024-10-04</Date>
             <Version>4.10.0</Version>
