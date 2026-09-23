@@ -13,6 +13,9 @@ def setup():
     #shelltools.unlink("py-compile")
     #shelltools.sym("/bin/true", "%s/py-compile" % get.curDIR())
 
+    # The GitHub tag tarball has no NEWS file, but automake in gnu strictness
+    # insists on one; an empty file satisfies it.
+    shelltools.touch("NEWS")
     autotools.autoreconf("-fi")
     autotools.configure("--disable-static \
                          --without-python3")
@@ -23,4 +26,4 @@ def build():
 def install():
     autotools.rawInstall("DESTDIR=%s" % get.installDIR())
 
-    pisitools.dodoc("ChangeLog", "COPYING*", "README*", "NEWS")
+    pisitools.dodoc("ChangeLog", "COPYING*", "README*")
