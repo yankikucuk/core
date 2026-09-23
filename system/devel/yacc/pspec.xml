@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>Yacc: Yet Another Compiler-Compiler</Summary>
         <Description>Yacc provides a general tool for describing the input to a computer program. The Yacc user specifies the structures of his input, together with code to be invoked as each such structure is recognized. Yacc turns such a specification into a subroutine that handles the input process</Description>
-        <Archive sha1sum="ebdf2d1a8d1a558f8c2fb7cc372435ca0f5c21df" type="targz">ftp://ftp.invisible-island.net/byacc/byacc-20200910.tgz</Archive>
+        <Archive sha1sum="9e22f26cbedd63bcc4f6ec5fc07acee9e5d0bdb1" type="targz">https://invisible-mirror.net/archives/byacc/byacc-20260126.tgz</Archive>
         <Patches>
 <!--             <Patch>mkstemp.patch</Patch> -->
 <!--             <Patch level="1">skeleton.c.diff</Patch> -->
@@ -30,6 +30,13 @@
     </Package>
 
     <History>
+        <Update release="7">
+            <Date>2026-09-23</Date>
+            <Version>20260126</Version>
+            <Comment>Version bump to 20260126.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="6">
             <Date>2020-12-09</Date>
             <Version>2.0.20200910</Version>
