@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>Ninja is a small build system with a focus on speed.</Summary>
         <Description>Ninja is a small build system with a focus on speed.</Description>
-        <Archive sha1sum="2a4d0b3e47b7bcd7468524bf17318e814c6a3984" type="targz" name="ninja-1.13.1.tar.gz">https://github.com/ninja-build/ninja/archive/refs/tags/v1.13.1.tar.gz</Archive>
+        <Archive sha1sum="814c89873e905fd07dfb13c3ebbcfbc0dfc277ca" type="targz" name="ninja-1.13.1.tar.gz">https://github.com/ninja-build/ninja/archive/refs/tags/v1.13.2.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>re2c</Dependency>
             <Dependency>asciidoc</Dependency>
@@ -37,6 +37,13 @@
     </Package>
 
     <History>
+        <Update release="21">
+            <Date>2026-09-23</Date>
+            <Version>1.13.2</Version>
+            <Comment>Version bump to 1.13.2.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="20">
             <Date>2025-07-11</Date>
             <Version>1.13.1</Version>
