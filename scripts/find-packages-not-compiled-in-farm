@@ -1,0 +1,136 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""Compare the source index of this repository with the farm's binary index.
+
+Every source package listed in the repository index is looked up in the
+binary index. A source that is missing from the binary index has never been
+compiled; a source whose latest release number differs has been bumped in
+git but not yet rebuilt. Both lists are printed as component paths so they
+can be handed to the farm.
+
+The script only uses the standard library and runs on both Python 2.7 and
+Python 3. Reading .xz indexes on Python 2 needs the python-pyliblzma module
+(installed on Pisi GNU/Linux).
+
+Usage:
+    find-packages-not-compiled-in-farm <source index> <binary index>
+
+Each index can be a local path or a URL, plain or .bz2/.xz compressed, for
+example:
+    find-packages-not-compiled-in-farm \\
+        https://github.com/pisilinux/core/raw/master/pisi-index.xml.xz \\
+        https://beta.pisilinux.org/pisi-index.xml.xz
+"""
+
+from __future__ import print_function
+
+import argparse
+import bz2
+import sys
+import xml.etree.ElementTree as ElementTree
+
+try:
+    from urllib.request import Request, urlopen   # Python 3
+except ImportError:                               # Python 2
+    from urllib2 import Request, urlopen
+
+# The farm's web server answers 403 to the default Python-urllib user agent,
+# so requests identify themselves as this repository's tooling instead.
+USER_AGENT = "pisilinux-repository-scripts/1.0"
+
+
+def load_index(uri):
+    """Return the decompressed bytes of an index given a path or URL."""
+    if "://" in uri:
+        request = Request(uri, headers={"User-Agent": USER_AGENT})
+        raw_data = urlopen(request).read()
+    else:
+        with open(uri, "rb") as index_file:
+            raw_data = index_file.read()
+    if uri.endswith("bz2"):
+        return bz2.decompress(raw_data)
+    if uri.endswith("xz") or uri.endswith("lzma"):
+        import lzma
+        return lzma.decompress(raw_data)
+    return raw_data
+
+
+def latest_release(history):
+    """Return the release attribute of the newest <Update> in a <History>."""
+    update = history.find("Update")
+    return update.get("release") if update is not None else None
+
+
+def parse_index(uri):
+    """Map every source name to ``(component, latest release)``.
+
+    Source indexes carry <SpecFile> elements; binary indexes carry <Package>
+    elements that point back to their source. Both layouts are handled.
+    """
+    root = ElementTree.fromstring(load_index(uri))
+    sources = {}
+    # Only direct children are packages: <Distribution><Obsoletes> also
+    # contains <Package> elements, which are bare names, not packages.
+    for spec in root.findall("SpecFile"):
+        source = spec.find("Source")
+        sources[source.findtext("Name")] = (source.findtext("PartOf"),
+                                            latest_release(spec.find("History")))
+    if sources:
+        return sources
+    for package in root.findall("Package"):
+        source_name = package.find("Source").findtext("Name")
+        sources[source_name] = (package.findtext("PartOf"),
+                                latest_release(package.find("History")))
+    return sources
+
+
+def component_path(component, source_name):
+    """Turn ``system.base`` + ``bash`` into ``system/base/bash``."""
+    return "%s/%s" % ((component or "").replace(".", "/"), source_name)
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="List source packages that the farm has not compiled yet.")
+    parser.add_argument("source_index", help="repository source index (path or URL)")
+    parser.add_argument("binary_index", help="farm binary index (path or URL)")
+    return parser.parse_args()
+
+
+def main():
+    arguments = parse_arguments()
+    try:
+        print("* reading %s" % arguments.source_index)
+        source_index = parse_index(arguments.source_index)
+        print("* reading %s" % arguments.binary_index)
+        binary_index = parse_index(arguments.binary_index)
+    except (IOError, OSError, ElementTree.ParseError) as error:
+        print("could not read index: %s" % error, file=sys.stderr)
+        return 1
+
+    missing = []
+    outdated = []
+    for source_name in sorted(source_index):
+        component, source_release = source_index[source_name]
+        path = component_path(component, source_name)
+        if source_name not in binary_index:
+            missing.append(path)
+        elif binary_index[source_name][1] != source_release:
+            outdated.append("%s  (repository release %s, farm release %s)"
+                            % (path, source_release, binary_index[source_name][1]))
+
+    if missing:
+        print("\n* Packages missing in %s" % arguments.binary_index)
+        for path in missing:
+            print("  %s" % path)
+    if outdated:
+        print("\n* Packages whose release differs (need compiling)")
+        for line in outdated:
+            print("  %s" % line)
+    if not missing and not outdated:
+        print("\n* Binary index is up to date")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

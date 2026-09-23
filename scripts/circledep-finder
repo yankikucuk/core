@@ -1,0 +1,218 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2008, TUBITAK/UEKAE
+#
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# Please read the COPYING file.
+#
+"""Find circular dependencies between the source packages of a PiSi repository.
+
+The script reads a source index (pisi-index.xml, plain or bz2/xz compressed,
+local path or URL), builds the dependency graph between source packages from
+both build-time and run-time dependencies, and reports every cycle it hits
+together with dependencies whose source package cannot be found.
+
+It runs on Python 2.7 on purpose: it relies on the ``pisi`` and ``piksemel``
+modules, which the distribution only ships for Python 2 (PiSi itself is a
+Python 2 program). Run it inside the pisilinux/chroot image or on a Pisi
+GNU/Linux system.
+
+Usage:
+    circledep-finder [--jobs N] <pisi-index.xml | pisi-index.xml.xz | URL>
+"""
+
+import argparse
+import bz2
+import lzma
+import multiprocessing
+import sys
+import urllib2
+
+import piksemel
+
+import pisi
+import pisi.graph
+import pisi.specfile
+from pisi.graph import CycleException
+
+
+class SourceDB(object):
+    """In-memory view of a source index: source specs and package-to-source map."""
+
+    def __init__(self, index_text):
+        self.__source_nodes = {}
+        self.__package_to_source = {}
+        document = piksemel.parseString(index_text)
+        self.__source_nodes, self.__package_to_source = self.__collect_sources(document)
+
+    @staticmethod
+    def __collect_sources(document):
+        sources = {}
+        package_to_source = {}
+        for spec in document.tags("SpecFile"):
+            source_name = spec.getTag("Source").getTagData("Name")
+            sources[source_name] = spec.toString()
+            for package in spec.tags("Package"):
+                package_to_source[package.getTagData("Name")] = source_name
+        return sources, package_to_source
+
+    def has_spec(self, name):
+        return name in self.__source_nodes
+
+    def get_spec(self, name):
+        spec = pisi.specfile.SpecFile()
+        spec.parse(self.__source_nodes[name])
+        return spec
+
+    def list_specs(self):
+        return self.__source_nodes.keys()
+
+    def package_to_source(self, package_name):
+        """Return the source package that builds ``package_name``.
+
+        Raises KeyError when no source in the index provides that package.
+        """
+        return self.__package_to_source[package_name]
+
+
+def find_cycle(source_db, start_source):
+    """Walk the dependency graph from ``start_source`` and report the first cycle.
+
+    Returns a tuple ``(cycle, problems)``: ``cycle`` is the string form of the
+    CycleException or an empty string when the reachable graph is acyclic;
+    ``problems`` lists dependencies whose source package is missing from the
+    index, so they can be reported instead of silently breaking the walk.
+    """
+    graph = pisi.graph.Digraph()
+    problems = []
+
+    def add_source_vertex(source):
+        if str(source.name) not in graph.vertices():
+            graph.add_vertex(str(source.name), (source.version, source.release))
+
+    def process_dependency(owner_source, dependency, next_frontier):
+        try:
+            dependency_source = source_db.package_to_source(dependency.package)
+        except KeyError:
+            problems.append("%s needs %s, but no source package provides it"
+                            % (owner_source.name, dependency.package))
+            return
+        if dependency_source not in graph.vertices():
+            next_frontier.add(dependency_source)
+            add_source_vertex(source_db.get_spec(dependency_source).source)
+        # A source depending on one of its own packages (foo -> foo-devel)
+        # is not a cycle between sources, so it does not become an edge.
+        if owner_source.name != dependency_source:
+            graph.add_edge(owner_source.name, dependency_source)
+
+    frontier = set([start_source])
+    while frontier:
+        next_frontier = set()
+        for source_name in frontier:
+            spec = source_db.get_spec(source_name)
+            source = spec.source
+            add_source_vertex(source)
+            for build_dependency in source.buildDependencies:
+                process_dependency(source, build_dependency, next_frontier)
+            for package in spec.packages:
+                for runtime_dependency in package.packageDependencies:
+                    process_dependency(source, runtime_dependency, next_frontier)
+        frontier = next_frontier
+        try:
+            graph.topological_sort()
+        except CycleException as cycle:
+            return str(cycle), problems
+    return "", problems
+
+
+# The farm's web server answers 403 to the default Python-urllib user agent,
+# so requests identify themselves as this repository's tooling instead.
+USER_AGENT = "pisilinux-repository-scripts/1.0"
+
+
+def load_index(uri):
+    """Return the decompressed text of a source index given a path or URL."""
+    if "://" in uri:
+        request = urllib2.Request(uri, headers={"User-Agent": USER_AGENT})
+        raw_data = urllib2.urlopen(request).read()
+    else:
+        with open(uri, "rb") as index_file:
+            raw_data = index_file.read()
+    if uri.endswith("bz2"):
+        return bz2.decompress(raw_data)
+    if uri.endswith("xz") or uri.endswith("lzma"):
+        return lzma.decompress(raw_data)
+    return raw_data
+
+
+# Shared with the worker processes through fork(): multiprocessing.Pool would
+# otherwise have to pickle the whole parsed index for every task.
+source_db = None
+
+
+def process_source(source_name, total, position):
+    sys.stdout.write("\r(%04d/%d) Calculating build dependencies of %s%s"
+                     % (position, total, source_name, " " * 20))
+    sys.stdout.flush()
+    return find_cycle(source_db, source_name)
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Find circular dependencies between source packages of a "
+                    "PiSi repository.")
+    parser.add_argument("index",
+                        help="source index: pisi-index.xml, a .bz2/.xz compressed "
+                             "copy, or a URL")
+    parser.add_argument("--jobs", type=int, default=multiprocessing.cpu_count(),
+                        help="number of worker processes (default: CPU count)")
+    return parser.parse_args()
+
+
+def main():
+    global source_db
+    arguments = parse_arguments()
+    try:
+        source_db = SourceDB(load_index(arguments.index))
+    except (IOError, OSError) as error:
+        sys.stderr.write("could not read %s: %s\n" % (arguments.index, error))
+        return 1
+
+    sources = sorted(source_db.list_specs())
+    cycles = set()
+    problems = set()
+
+    def collect(result):
+        cycle, source_problems = result
+        if cycle:
+            cycles.add(cycle)
+        problems.update(source_problems)
+
+    pool = multiprocessing.Pool(arguments.jobs)
+    for position, source_name in enumerate(sources, 1):
+        pool.apply_async(process_source, (source_name, len(sources), position),
+                         callback=collect)
+    pool.close()
+    pool.join()
+
+    print("")
+    if problems:
+        print("Dependencies without a source package:")
+        for problem in sorted(problems):
+            print("  %s" % problem)
+    if cycles:
+        print("Circular dependencies:")
+        for cycle in sorted(cycles):
+            print("  %s" % cycle)
+    else:
+        print("No circular dependency found")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
