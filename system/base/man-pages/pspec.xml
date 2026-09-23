@@ -12,8 +12,8 @@
         <IsA>data:doc</IsA>
         <Summary>A somewhat comprehensive collection of Linux man pages</Summary>
         <Description>A large collection of man pages (documentation) from the Linux Documentation Project (LDP).</Description>
-        <Archive sha1sum="d15c8437ea303597f33031634b85eaa10b50cb91" type="targz">https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/snapshot/man-pages-6.06.tar.gz</Archive>
-        <Archive sha1sum="ee907694a6ac012adb856ce0342103311340fcec" target="man-pages-6.06" type="tarxz">https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-2017-a.tar.xz</Archive>
+        <Archive sha1sum="a3c9f957f61f2295d239f053ebdab5cfeed53340" type="tarxz">https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/man-pages-6.19.tar.xz</Archive>
+        <Archive sha1sum="ee907694a6ac012adb856ce0342103311340fcec" target="man-pages-6.19" type="tarxz">https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-2017-a.tar.xz</Archive>
     </Source>
 
     <Package>
@@ -24,6 +24,7 @@
         <Files>
             <Path fileType="doc">/usr/share/doc</Path>
             <Path fileType="man">/usr/share/man</Path>
+            <Path fileType="executable">/usr/bin</Path>
         </Files>
         <AdditionalFiles>
             <AdditionalFile owner="root" permission="0644" target="/usr/share/man/man1/getent.1">man1/getent.1</AdditionalFile>
@@ -32,6 +33,13 @@
     </Package>
 
     <History>
+        <Update release="15">
+            <Date>2026-09-23</Date>
+            <Version>6.19</Version>
+            <Comment>Version bump to 6.19 (release tarball instead of the git snapshot); install with make -R as the GNUmakefile requires.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="14">
             <Date>2024-07-18</Date>
             <Version>6.06</Version>

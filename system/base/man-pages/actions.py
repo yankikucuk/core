@@ -9,9 +9,12 @@ from pisi.actionsapi import pisitools
 from pisi.actionsapi import get
 
 def install():
-    pisitools.dosed("GNUmakefile", "prefix := /usr/local", "prefix := /usr")
-
-    autotools.rawInstall("DESTDIR=%s prefix=/usr" % get.installDIR())
+    # The 6.x GNUmakefile refuses to run without -R (no built-in variables)
+    # and takes prefix from the command line, so the old dosed is gone.
+    # PiSi exports INSTALL_DIR (the package install directory) into the
+    # environment and the man-pages makefiles use a variable of the same
+    # name for "install -d"; pass the makefile meaning on the command line.
+    autotools.rawInstall('-R DESTDIR=%s prefix=/usr INSTALL_DIR="install -m 755 -d"' % get.installDIR())
     autotools.rawInstall("DESTDIR=%s -C man-pages-posix-2017" % get.installDIR())
 
     # These come from attr
