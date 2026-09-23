@@ -18,10 +18,8 @@
             <Dependency>zlib-devel</Dependency>
 			<Dependency>cmake</Dependency>
         </BuildDependencies>
-        <Archive sha1sum="83f767c2bc1b0d9114273b883771491ae2bf6f4f" type="targz">https://github.com/google/snappy/archive/1.1.9.tar.gz</Archive>
+        <Archive sha1sum="09171ad0f0b43d2c7f0d5f787a2ac907c6ba7c80" type="targz">https://github.com/google/snappy/archive/1.2.2.tar.gz</Archive>
         <Patches>
-             <Patch level="1">snappy-thirdparty.patch</Patch>
-             <Patch level="1">snappy-inline.patch</Patch>
         </Patches>
     </Source>
     <Package>
@@ -49,6 +47,13 @@
         </Files>
     </Package>
     <History>
+        <Update release="8">
+            <Date>2026-09-23</Date>
+            <Version>1.2.2</Version>
+            <Comment>Version bump to 1.2.2. Dropped snappy-thirdparty.patch and snappy-inline.patch, both obsolete in 1.2.x.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="7">
             <Date>2021-06-03</Date>
             <Version>1.1.9</Version>
