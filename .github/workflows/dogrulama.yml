@@ -1,0 +1,113 @@
+name: Tarifleri Doğrula
+
+# Her pull request'te ve master'a her push'ta tarifleri denetler. Amaç, bozuk
+# bir pspec.xml ya da actions.py dosyasının depoya girmesini ve çiftlikteki
+# derlemeyi kırmasını önlemektir. Paket derlemesi yapılmaz; yalnızca
+# tariflerin biçimsel doğruluğu ve PiSi'nin onları okuyabildiği denetlenir.
+
+on:
+  pull_request:
+    paths:
+      - '**/pspec.xml'
+      - '**/actions.py'
+      - '**/component.xml'
+      - 'components.xml'
+      - 'distribution.xml'
+      - 'groups.xml'
+      - 'scripts/**'
+      - '.github/workflows/dogrulama.yml'
+  push:
+    branches:
+      - master
+    paths:
+      - '**/pspec.xml'
+      - '**/actions.py'
+      - '**/component.xml'
+      - 'components.xml'
+      - 'distribution.xml'
+      - 'groups.xml'
+      - 'scripts/**'
+      - '.github/workflows/dogrulama.yml'
+
+# GitHub'ın istediği Node 24 zorlamasını çevre değişkeni olarak ekliyoruz
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  bicim:
+    name: XML ve biçim denetimi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu Çek
+        uses: actions/checkout@v4
+        with:
+          # Pull request'lerde değişen dosyaları bulmak için taban dal gerekir.
+          fetch-depth: 0
+
+      - name: xmllint Kur
+        run: sudo apt-get install -y --no-install-recommends libxml2-utils
+
+      - name: XML dosyaları iyi biçimli mi
+        run: |
+          # pisi-index.xml üretilmiş bir dosyadır, elle düzenlenmez; denetim dışıdır.
+          find . -name '*.xml' -not -name 'pisi-index.xml' -not -path './.git/*' -print0 \
+            | xargs -0 xmllint --noout
+
+      - name: Satır sonları LF mi
+        run: |
+          # CRLF satır sonları PiSi'nin tarif ayrıştırmasını bozmaz ama diff'leri
+          # okunmaz hale getirir; depoda hiç CRLF dosya yok, öyle kalmalı.
+          if grep -rlI $'\r$' --include=pspec.xml --include=actions.py . ; then
+            echo "::error::CRLF satır sonu içeren dosyalar var; LF'ye çevirin."
+            exit 1
+          fi
+
+      - name: Değişen dosyalarda sekme var mı
+        if: github.event_name == 'pull_request'
+        run: |
+          # Paketleme kuralı: pspec.xml ve actions.py dosyalarında sekme değil boşluk
+          # kullanılır. Eski dosyalarda hâlâ sekme olduğu için denetim yalnızca bu
+          # pull request'in değiştirdiği dosyalara uygulanır.
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" \
+                    | grep -E '(^|/)(pspec\.xml|actions\.py)$' || true)
+          [ -z "$changed" ] && { echo "Denetlenecek dosya yok."; exit 0; }
+          failed=0
+          for file in $changed; do
+            [ -f "$file" ] || continue
+            if grep -q $'\t' "$file"; then
+              echo "::error file=$file::Sekme karakteri içeriyor; boşluk kullanın."
+              failed=1
+            fi
+          done
+          exit $failed
+
+  pisi:
+    name: PiSi ile tarif denetimi
+    runs-on: ubuntu-latest
+    # Resmi chroot imajı gerçek PiSi'yi ve Python 2.7'yi içerir; tarifler
+    # çiftlikte kullanılacak aynı ayrıştırıcıyla okunur.
+    container:
+      image: pisilinux/chroot:latest
+    steps:
+      - name: Kodu Çek
+        uses: actions/checkout@v4
+
+      - name: actions.py dosyaları Python 2.7 ile derleniyor mu
+        run: |
+          # PiSi actions.py dosyalarını Python 2.7 ile çalıştırır; Python 3'e özgü
+          # söz dizimi çiftlikte derleme hatası olarak ortaya çıkar.
+          find . -name actions.py -not -path './.git/*' -print0 \
+            | xargs -0 -n 50 python -m py_compile
+
+      - name: Yardımcı betikler derleniyor mu
+        run: |
+          for script in scripts/circledep-finder scripts/find-packages-not-compiled-in-farm scripts/history_reset.py scripts/validate-specs; do
+            [ -f "$script" ] && python -m py_compile "$script"
+          done
+          true
+
+      - name: PiSi tüm tarifleri okuyabiliyor mu
+        run: |
+          # Her pspec.xml, çiftliğin de kullandığı PiSi ayrıştırıcısıyla okunur.
+          # DTD'ye uymayan ya da eksik alanı olan her tarif dosya adıyla bildirilir.
+          python scripts/validate-specs .

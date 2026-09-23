@@ -1,0 +1,58 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""Read every pspec.xml under a directory with PiSi's own parser.
+
+"pisi index" would do the same, but it parses with a process pool and only
+reports the first failure. This script reads the recipes one by one and
+prints every file that PiSi rejects together with the reason, which is what
+a reviewer or a CI job needs. Nothing is written.
+
+It runs on Python 2.7 because it uses the ``pisi`` module, which the
+distribution only ships for Python 2; run it inside the pisilinux/chroot
+image or on a Pisi GNU/Linux system.
+
+Usage:
+    validate-specs [DIRECTORY]
+
+Exit status is 0 when every recipe parses, 1 otherwise.
+"""
+
+import os
+import sys
+
+import pisi.specfile
+
+
+def find_spec_files(root):
+    for directory, subdirectories, files in os.walk(root):
+        subdirectories[:] = [d for d in subdirectories if not d.startswith(".")]
+        if "pspec.xml" in files:
+            yield os.path.join(directory, "pspec.xml")
+
+
+def validate(spec_path):
+    """Return None when PiSi accepts the recipe, otherwise the error text."""
+    spec = pisi.specfile.SpecFile()
+    try:
+        spec.read(spec_path)
+    except Exception as error:      # pisi raises several unrelated types
+        return str(error)
+    return None
+
+
+def main():
+    root = sys.argv[1] if len(sys.argv) > 1 else "."
+    failures = []
+    count = 0
+    for spec_path in sorted(find_spec_files(root)):
+        count += 1
+        error = validate(spec_path)
+        if error:
+            failures.append((spec_path, error))
+            print("FAIL %s: %s" % (spec_path, error))
+    print("%d recipes read, %d rejected" % (count, len(failures)))
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
