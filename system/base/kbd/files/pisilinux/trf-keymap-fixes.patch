@@ -1,8 +1,6 @@
-Index: kbd-1.15/data/keymaps/i386/fgGIod/trf.map
-===================================================================
---- kbd-1.15.orig/data/keymaps/i386/fgGIod/trf.map
-+++ kbd-1.15/data/keymaps/i386/fgGIod/trf.map
-@@ -5,112 +5,135 @@ strings as usual
+--- a/data/keymaps/i386/fgGIod/trf.map	2026-09-23 19:30:07
++++ b/data/keymaps/i386/fgGIod/trf.map	2026-09-23 19:30:07
+@@ -5,112 +5,135 @@
  
  keycode   1 = Escape Escape
  	alt       keycode   1 = Meta_Escape
@@ -65,15 +63,16 @@ Index: kbd-1.15/data/keymaps/i386/fgGIod/trf.map
  keycode  14 = Delete	Delete
  	alt       keycode  14 = Meta_Delete
  keycode  15 = Tab
--	shift	keycode  15 = Meta_Tab
-+	shift     keycode  15 = Meta_Tab
+ 	shift	keycode  15 = Backtab
  	alt       keycode  15 = Meta_Tab
  keycode  16 = f
 +	altgr     keycode  16 = at
  keycode  17 = g
- keycode  18 = +0360 +0320
- keycode  19 = +0375 +I
+-keycode  18 = +0360 +0320
+-keycode  19 = +0375 +I
 -	altgr keycode  19 = +0356
++keycode  18 = +U+00F0 +U+00D0
++keycode  19 = +U+00FD +I
 +	altgr     keycode  19 = paragraph
  	altgr shift keycode  19 = +0316
  keycode  20 = o
@@ -112,7 +111,8 @@ Index: kbd-1.15/data/keymaps/i386/fgGIod/trf.map
 -	altgr keycode  30 = +0373
 +	altgr     keycode  30 = ucircumflex
  	altgr shift keycode  30 = +0333
- keycode  31 = +i +0335
+-keycode  31 = +i +0335
++keycode  31 = +i +U+00DD
 +	altgr     keycode  31 = icircumflex
  keycode  32 = e
 +	altgr     keycode  32 = currency
@@ -120,7 +120,8 @@ Index: kbd-1.15/data/keymaps/i386/fgGIod/trf.map
 -	altgr keycode  33 = +0342
 +	altgr     keycode  33 = acircumflex
  	altgr shift keycode  33 = +0302
- keycode  34 = +0374 +0334
+-keycode  34 = +0374 +0334
++keycode  34 = +udiaeresis +Udiaeresis
 +	altgr     keycode  34 = ucircumflex
  keycode  35 = t
  keycode  36 = k
@@ -128,8 +129,9 @@ Index: kbd-1.15/data/keymaps/i386/fgGIod/trf.map
 +	altgr     keycode  37 = mu
  keycode  38 = l
  keycode  39 = y
+-keycode  40 = +0376 +0336
 +	altgr     keycode  39 = acute
- keycode  40 = +0376 +0336
++keycode  40 = +U+00FE +U+00DE
  	control   keycode  40 = Control_g
 -keycode  41 = w
 +	altgr     keycode  40 = numbersign
@@ -143,13 +145,15 @@ Index: kbd-1.15/data/keymaps/i386/fgGIod/trf.map
  	alt shift keycode  43 = Meta_plus
 +	altgr     keycode  43 = grave
  keycode  44 = j
+-keycode  45 = +0366 +0326
 +	altgr     keycode  44 = guillemotleft
- keycode  45 = +0366 +0326
++keycode  45 = +odiaeresis +Odiaeresis
 +	altgr     keycode  45 = guillemotright
  keycode  46 = v
  keycode  47 = c
+-keycode  48 = +0347 +0307
 +	altgr     keycode  47 = cent
- keycode  48 = +0347 +0307
++keycode  48 = +ccedilla +Ccedilla
  keycode  49 = z
  keycode  50 = s
 +	altgr     keycode  50 = section
@@ -165,7 +169,7 @@ Index: kbd-1.15/data/keymaps/i386/fgGIod/trf.map
  	alt       keycode  53 = Meta_comma
  	alt shift keycode  53 = Meta_minus
  keycode  54 = Shift
-@@ -121,7 +144,7 @@ keycode  58 = Caps_Lock
+@@ -121,7 +144,7 @@
  keycode  83 = KP_Comma KP_Period
  	altgr control keycode 83 = Boot
  	control alt   keycode 83 = Boot
