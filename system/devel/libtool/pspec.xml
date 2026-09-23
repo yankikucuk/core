@@ -12,7 +12,7 @@
         <IsA>library</IsA>
         <Summary>A shared library tool for developers</Summary>
         <Description>Libtool is a shared library tool for developers.</Description>
-        <Archive sha1sum="9781a113fe6af1b150571410b29d3eee2e792516" type="tarxz">mirrors://gnu/libtool/libtool-2.5.4.tar.xz</Archive>
+        <Archive sha1sum="4d49bd98639a2f60cb348af1ca5623944141bc22" type="tarxz">mirrors://gnu/libtool/libtool-2.6.2.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>gnuconfig</Dependency>
             <Dependency>autoconf</Dependency>
@@ -64,6 +64,13 @@
     </Package>
 
     <History>
+        <Update release="10">
+            <Date>2026-09-23</Date>
+            <Version>2.6.2</Version>
+            <Comment>Version bump to 2.6.2.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="9">
             <Date>2025-11-05</Date>
             <Version>2.5.4</Version>
