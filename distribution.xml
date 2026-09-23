@@ -29,5 +29,14 @@
            <Package>mkinitcpio</Package>
            <Package>Calamares</Package>
            <Package>calamares-theme-pisilinux</Package>
+           <!-- removed 2026-09: dead upstreams with no remaining dependents -->
+           <Package>mingetty</Package>
+           <Package>pcmciautils</Package>
+           <Package>libee</Package>
+           <Package>libee-devel</Package>
+           <!-- OpenSSL 1.1 reached end of life on 2023-09-11 -->
+           <Package>openssl-1.1</Package>
+           <Package>openssl-1.1-devel</Package>
+           <Package>openssl-1.1-32bit</Package>
       </Obsoletes>
 </PISI>
