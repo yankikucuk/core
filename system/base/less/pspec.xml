@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>Excellent text file viewer</Summary>
         <Description>The less utility is a text file browser that resembles more, but has more capabilities. Less allows you to move backwards in the file as well as forwards. Since less doesn't have to read the entire input file before it starts, less starts up more quickly than text editors (for example, vi).</Description>
-        <Archive sha1sum="7f4a99fd98bf63ebc11c5bc85c0a0605376614d4" type="targz">http://www.greenwoodsoftware.com/less/less-668.tar.gz</Archive>
+        <Archive sha1sum="8bf121e087e017f37553d55c9a89db79eba4bdac" type="targz">http://www.greenwoodsoftware.com/less/less-710.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>ncurses-devel</Dependency>
         </BuildDependencies>
@@ -26,6 +26,8 @@
         <Files>
             <Path fileType="config">/etc/env.d</Path>
             <Path fileType="executable">/usr/bin</Path>
+            <Path fileType="executable">/usr/lib/lessecho</Path>
+            <Path fileType="executable">/usr/lib/less-osc8-open</Path>
             <Path fileType="doc">/usr/share/doc</Path>
             <Path fileType="man">/usr/share/man</Path>
         </Files>
@@ -38,6 +40,13 @@
     </Package>
 
     <History>
+        <Update release="12">
+            <Date>2026-09-23</Date>
+            <Version>710</Version>
+            <Comment>Version bump to 710. lesskey is no longer a separate program; helper programs are installed under /usr/lib per repository rule.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="11">
             <Date>2024-10-21</Date>
             <Version>668</Version>

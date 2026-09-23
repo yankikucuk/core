@@ -10,7 +10,9 @@ from pisi.actionsapi import get
 
 def setup():
     autotools.autoreconf("-vfi")
-    autotools.configure()
+    # less 710 installs lessecho and the OSC 8 helper under libexecdir;
+    # the repository rule is --libexecdir=/usr/lib.
+    autotools.configure("--libexecdir=/usr/lib")
 
 def build():
     autotools.make()
@@ -18,10 +20,8 @@ def build():
 def install():
     autotools.rawInstall('DESTDIR="%s"' % get.installDIR())
 
-    pisitools.dobin("less")
-    pisitools.dobin("lessecho")
-    pisitools.dobin("lesskey")
-    pisitools.newman("lesskey.nro", "lesskey.1")
+    # Since less 582 there is no lesskey binary: less reads .lesskey files
+    # itself; the lesskey(1) manual is installed by "make install" as lesskey.5.
     pisitools.newman("less.nro", "less.1")
 
     pisitools.dodoc("NEWS", "README", "COPYING")
