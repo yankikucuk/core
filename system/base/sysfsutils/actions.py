@@ -9,6 +9,8 @@ from pisi.actionsapi import pisitools
 from pisi.actionsapi import get
 
 def setup():
+    # The GitHub tag tarball carries no generated configure script.
+    autotools.autoreconf("-fi")
     autotools.configure("--libdir=/lib \
                          --disable-static")
 
@@ -19,8 +21,7 @@ def install():
     autotools.rawInstall("DESTDIR=%s" % (get.installDIR()))
 
     # We do not distribute this
-    pisitools.remove("/usr/bin/dlist_test")
 
     pisitools.dodoc("docs/libsysfs.txt")
-    pisitools.dodoc("AUTHORS", "COPYING", "ChangeLog", "NEWS", "README", "TODO")
+    pisitools.dodoc("AUTHORS", "COPYING", "CREDITS", "README", "TODO")
 
