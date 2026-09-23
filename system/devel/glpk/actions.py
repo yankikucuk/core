@@ -18,7 +18,9 @@ def setup():
     pisitools.dosed("libtool", " -shared ", " -Wl,-O1,--as-needed -shared ")
 
 def build():
-    autotools.make("CFLAGS=-O2 LDFLAGS=-s")
+    # The bundled minisat declares "typedef int bool", which is an error
+    # under the C23 default of GCC 15; build with the C17 dialect.
+    autotools.make("CFLAGS=\"-O2 -std=gnu17\" LDFLAGS=-s")
 
 def install():
     autotools.install()
