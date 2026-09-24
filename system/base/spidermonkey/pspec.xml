@@ -23,7 +23,6 @@
             <Dependency>llvm</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">mozjs78-silence-sandbox-violations.patch</Patch> -->
             <Patch level="1">mozjs78-fix-soname.patch</Patch>
             <!--Patch level="1">Remove-unused-LLVM-and-Rust-build-dependencies.patch</Patch-->
         </Patches>

@@ -24,7 +24,6 @@
             <Dependency>libxcrypt-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch>CVE-2016-2381_duplicate_env.diff</Patch> -->
         </Patches>
     </Source>
 

@@ -16,7 +16,6 @@
         <Description>gobject-introspection can scan C header and source files in order to generate introspection typelib files. It also provides an API to examine typelib files, useful for creating language bindings among other things.</Description>
         <Archive sha1sum="06f2c7c511f6ae476971106d9456f73a6121ff11" type="tarxz">mirrors://gnome/gobject-introspection/1.86/gobject-introspection-1.86.0.tar.xz</Archive>
         <BuildDependencies>
-            <!--<Dependency>cairo-devel</Dependency>-->
             <Dependency>meson</Dependency>
             <Dependency versionFrom="3.11.11">python3-devel</Dependency>
             <Dependency>libffi-devel</Dependency>
@@ -26,7 +25,6 @@
             <Dependency>chrpath</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">gobject-introspection-1.76.1-revert-failing-test.patch</Patch> -->
         </Patches>
     </Source>
 

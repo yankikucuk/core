@@ -30,7 +30,6 @@
             <Dependency>zlib-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">glibc.patch</Patch> -->
         </Patches>
     </Source>
 

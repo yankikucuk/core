@@ -26,7 +26,6 @@
             <Dependency>elfutils-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch>0001-make-iproute2-fhs-compliant.patch</Patch> -->
         </Patches>
     </Source>
 

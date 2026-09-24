@@ -17,20 +17,10 @@
             <Dependency>libxcrypt-devel</Dependency>
         </BuildDependencies>
         <Patches>
-            <!--<Patch>makefile.patch</Patch>-->
-            <!--<Patch>sysvinit-2.86-docs.patch</Patch>-->
-<!--             <Patch level="1">sysvinit-2.86-ctrlc.patch</Patch> -->
 
-<!--             <Patch level="1">sysvinit-2.78-man.patch</Patch> -->
             
             <Patch level="1">sysvinit-2.86-loginshell.patch</Patch>
-<!--             <Patch level="1">sysvinit-2.86-single.patch</Patch> -->
-<!--             <Patch level="1">sysvinit-2.88-quiet.patch</Patch> -->
             
-<!--             <Patch level="1">sysvinit-2.88-ipv6.patch</Patch> -->
-<!--             <Patch level="1">sysvinit-2.88-omit.patch</Patch> -->
-<!--             <Patch level="1">sysvinit-2.88-wall-maxlines.patch</Patch> -->
-<!--             <Patch level="1">sysvinit-2.88-sysmacros.patch</Patch> -->
         </Patches>
     </Source>
 

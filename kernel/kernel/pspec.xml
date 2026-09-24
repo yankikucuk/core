@@ -43,17 +43,10 @@
             <Patch level="1">patches/aufs6/aufs6.18-20260525.patch</Patch>
             <Patch level="1">patches/aufs6/aufs6-base.patch</Patch>
             <Patch level="1">patches/aufs6/aufs6-kbuild.patch</Patch>
-<!--             <Patch level="1">patches/aufs6/aufs6-loopback.patch</Patch> -->
             <Patch level="1">patches/aufs6/aufs6-mmap.patch</Patch>
-<!--             <Patch level="1">patches/aufs6/tmpfs-idr.patch</Patch> -->
-<!--             <Patch level="1">patches/aufs6/vfs-ino.patch</Patch> -->
-<!--             <Patch level="1">patches/aufs6/aufs6-standalone.patch</Patch> -->
 
             <!-- Mageia Linux patches-->
-<!--             <Patch level="1">patches/mageia/fs-procfs-do-not-list-TID-0-in-proc-pid-task.patch</Patch> -->
 
-<!--             <Patch level="1">patches/mageia/CVE-2019-12379.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/CVE-2020-16119-DCCP-CCID-structure-use-after-free.patch</Patch> -->
             <Patch level="1">patches/mageia/platform-x86-add-shuttle-wmi-driver.patch</Patch>
             <Patch level="1">patches/mageia/platform-x86-shuttle-wmi-4.13-buildfix.patch</Patch>
             <Patch level="1">patches/mageia/platform-x86-shuttle-wmi-4.2-buildfix.patch</Patch>
@@ -80,19 +73,10 @@
             <Patch level="1">patches/mageia/0001-rtl8812au-fix-missed-prototypes.patch</Patch>
             <Patch level="1">patches/mageia/0002-rtl8812au-add-compiler-suggested-braces-around-empty.patch</Patch>
 
-<!--             <Patch level="1">patches/mageia/0122-Fix-change_beacon-for-kernel-6.7.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/0123-Update-os_intfs.c-for-kernel-6.8.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/0124-Update-usb_intf.c-for-kernel-6.8.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/0128-Update-ioctl_cfg80211.c-support-for-kernel-6.9.patch</Patch> -->
 
 <!--             rtw88 -->
-<!--             <Patch level="1">patches/mageia/net-wireless-rtw88-add-8723de-alias.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/net-wireless-rtw88-add-r8822be-alias.patch</Patch> -->
 
 <!--             iwlfiwi -->
-<!--             <Patch level="1">patches/mageia/net-wireless-iwlwifi-add-new-pci-id-for-6235.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/wifi-iwlwifi-pcie-add-support-for-AX101NGW.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/wifi-iwlwifi-fw-skip-ppag-for-jf.patch</Patch> -->
 
             <Patch level="1">patches/mageia/x86-pci-toshiba-equium-a60-assign-busses.patch</Patch>
         </Patches>

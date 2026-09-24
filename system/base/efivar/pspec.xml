@@ -18,11 +18,6 @@
            <Dependency>popt-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">gentoo/efivar-38-Makefile-dep.patch</Patch> -->
-<!--             <Patch level="1">gentoo/efivar-38-binutils-2.36.patch</Patch> -->
-<!--             <Patch level="1">gentoo/efivar-38-ia64-relro.patch</Patch> -->
-<!--             <Patch level="1">gentoo/efivar-38-ld-locale.patch</Patch> -->
-<!--             <Patch level="1">gentoo/efivar-38-march-native.patch</Patch> -->
         </Patches>
     </Source>
 

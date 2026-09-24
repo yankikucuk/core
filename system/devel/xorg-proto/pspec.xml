@@ -21,7 +21,6 @@
         </BuildDependencies>
         <Patches>
             <Patch level="1">pkgconfigdir.patch</Patch>
-<!--             <Patch level="1">doc-install.patch</Patch> -->
         </Patches>
     </Source>
 
@@ -29,7 +28,6 @@
         <Name>xorg-proto</Name>
         <RuntimeDependencies>
           <!--remove for fix cycle dep-->
-          <!--<Dependency>libXau-devel</Dependency>-->
         </RuntimeDependencies>
         <Files>
             <Path fileType="data">/usr/lib/doc</Path>

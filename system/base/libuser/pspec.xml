@@ -22,8 +22,6 @@
         <Patches>
             <Patch>libuser-0.56.15-fix_blowfish.patch</Patch>
             <Patch>libuser-0.56.9-fix-str-fmt.patch</Patch>
-        <!--<Patch level="1">disable-sgml2x-conversion.diff</Patch>
-        <Patch level="0">add-python-linkage.diff</Patch>-->
         </Patches>
     </Source>
 

@@ -19,7 +19,6 @@
             <Dependency>python3-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">f165525fe744e6fe3b377b480d6cc5f9c546d360.patch</Patch> -->
         </Patches>
     </Source>
 

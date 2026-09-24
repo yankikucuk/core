@@ -25,7 +25,6 @@
             <Dependency>libxcrypt-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">uk3.patch</Patch> -->
             <!--Patch level="1">fedora/shadow-4.8-crypt_h.patch</Patch>
             <Patch level="1">fedora/shadow-4.8-goodname.patch</Patch>
             <Patch level="1">fedora/shadow-4.8-ignore-login-prompt.patch</Patch>

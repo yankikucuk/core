@@ -20,7 +20,6 @@
             <Dependency>python-setuptools</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">0001-Revert-Don-t-depend-on-the-execute-bit-to-determine-.patch</Patch> -->
         </Patches>
     </Source>
 

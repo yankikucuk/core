@@ -19,8 +19,6 @@
             <Dependency>mpfr-devel</Dependency>
         </BuildDependencies>
         <Patches>
-            <!--<Patch level="1">gawk-4.1.1-sandbox_issue.patch</Patch>
-            <Patch level="1">gawk-4.1.1-sigpipe.patch</Patch>-->
         </Patches>
     </Source>
 

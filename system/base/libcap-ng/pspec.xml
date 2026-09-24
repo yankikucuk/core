@@ -20,7 +20,6 @@
             <Dependency>python-devel</Dependency>
         </BuildDependencies>
         <Patches>
-            <!--<Patch level="1">libcap-ng-0.6.5-device.patch</Patch>-->
 
             <!-- FIXME: Drop this once upstream fixed the broken xattr.h
             header in kernel. -->

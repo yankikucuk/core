@@ -19,7 +19,6 @@
             <Dependency>diffutils</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">8301a21.patch</Patch> -->
         </Patches>
     </Source>
 

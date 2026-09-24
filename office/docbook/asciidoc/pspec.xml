@@ -19,7 +19,6 @@
             <Dependency>python3</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="0">fix_makefile_vimdir.patch</Patch> -->
         </Patches>
     </Source>
 

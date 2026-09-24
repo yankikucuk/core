@@ -30,9 +30,6 @@
             <Dependency>intltool</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">0001-Updated-build-args-for-Pisi-Linux.patch</Patch> -->
-<!--             <Patch level="1">polkit-0.118-duktape.patch</Patch> -->
-<!--             <Patch level="1">polkit-0.118-elogind.patch</Patch> -->
             <Patch level="1">use-system-locale-in-gobject-api.diff</Patch>
             <Patch level="1">gentoo/polkit-126-elogind.patch</Patch>
             <Patch level="1">gentoo/polkit-126-dbusmock.patch</Patch>

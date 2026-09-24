@@ -35,7 +35,6 @@
             <Dependency>libutil-linux</Dependency>
             <Dependency>fuse3</Dependency>
             <!-- The first release shipped within util-linux -->
-        <!--<Dependency>libuuid</Dependency>-->
         </RuntimeDependencies>
         <Files>
             <Path fileType="config">/etc</Path>

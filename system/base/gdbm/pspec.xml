@@ -17,7 +17,6 @@
             <Dependency>readline-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">gcc10.patch</Patch> -->
         </Patches>
     </Source>
 

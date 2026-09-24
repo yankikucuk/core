@@ -28,7 +28,6 @@
         </BuildDependencies>
         <Patches>
             <Patch level="1">upstream/util-linux-ng-2.21-login-lastlog.patch</Patch>
-            <!--<Patch level="1">libmount-Fix-regression-when-mounting-with-atime.patch</Patch> -->
         </Patches>
     </Source>
     <Package>

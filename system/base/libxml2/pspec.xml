@@ -21,9 +21,6 @@
             <Dependency versionFrom="8.0.1">readline-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">libxml2-2.11.5-CVE-2023-45322.patch</Patch> -->
-<!--             <Patch level="1">fedora/libxml2-2.9.12-fix-formatting-regression.patch</Patch> -->
-<!--             <Patch level="1">fedora/libxml2-2.9.8-python3-unicode-errors.patch</Patch> -->
 <!--              <Patch level="1">libxml2-2.9.11-disable-fuzz-tests.patch</Patch> --> -->
         </Patches>
     </Source>

@@ -21,7 +21,6 @@
         </Patches>
         <BuildDependencies>
             <Dependency>klibc</Dependency>
-<!--             <Dependency>colorgcc</Dependency> -->
         </BuildDependencies>
     </Source>
 

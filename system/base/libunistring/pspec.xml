@@ -15,13 +15,9 @@
         <Description>This library provides functions for manipulating Unicode strings and for manipulating C strings according to the Unicode standard.</Description>
         <Archive sha1sum="3e83f1f795ae8631618a8c756dd2bd132cb39d13" type="tarxz">mirrors://gnu/libunistring/libunistring-1.4.2.tar.xz</Archive>
         <BuildDependencies>
-<!--             <Dependency>glibc-devel</Dependency> -->
-<!--             <Dependency versionFrom="8.0.1">readline-devel</Dependency> -->
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">0100-float-endian-detection.patch</Patch> -->
             <Patch level="1">0700-multiarch-libc.patch</Patch>
-<!--             <Patch level="1">0705-gcc-9.patch</Patch> -->
         </Patches>
     </Source>
 

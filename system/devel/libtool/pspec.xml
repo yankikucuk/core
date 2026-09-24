@@ -19,7 +19,6 @@
             <Dependency>automake</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">libtool-2.4.7-grep-3.8.patch</Patch> -->
         </Patches>
     </Source>
 

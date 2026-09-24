@@ -20,7 +20,6 @@
             <Dependency versionFrom="1.16.2">dbus-devel</Dependency>
             <!-- New dbus uses GVariant data structure. We need glib2 >= 2.24 -->
             <Dependency versionFrom="2.77.1">glib2-devel</Dependency>
-<!--             <Dependency>libpcre-devel</Dependency> -->
             <Dependency versionFrom="2.5.0">expat-devel</Dependency>
             <Dependency>libxml2</Dependency>
         </BuildDependencies>

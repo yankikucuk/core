@@ -18,7 +18,6 @@
             <Dependency>gmp-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">mpfr-4.2.0-p9.patch</Patch> -->
         </Patches>
     </Source>
 

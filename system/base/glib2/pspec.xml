@@ -41,7 +41,6 @@
         <Name>glib2</Name>
         <RuntimeDependencies>
             <Dependency>zlib</Dependency>
-            <!--<Dependency>elfutils</Dependency>-->
             <Dependency>libffi</Dependency>
             <Dependency>libpcre2</Dependency>
             <Dependency>libutil-linux</Dependency>

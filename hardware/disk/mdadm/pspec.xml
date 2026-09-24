@@ -18,7 +18,6 @@
         </BuildDependencies>
         <Patches>
             <Patch level="1">sysmacros.patch</Patch>
-<!--             <Patch level="1">mdadm-4.3-no-udev.patch</Patch> -->
         </Patches>
     </Source>
 

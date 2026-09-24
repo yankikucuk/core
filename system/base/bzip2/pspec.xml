@@ -15,7 +15,6 @@
         <Archive sha1sum="bf7badf7e248e0ecf465d33c2f5aeec774209227" type="targz">https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz</Archive>
         <Patches>
             <Patch level="1">bzip2-1.0.2-progress.patch</Patch>
-<!--             <Patch level="1">bzip2-1.0.4-bzip2recover.patch</Patch> -->
             <Patch level="1">bzip2-1.0.4-man-links.patch</Patch>
             <Patch>bzip2-1.0.8-saneso.patch</Patch>
             <Patch level="1">manpath.patch</Patch>

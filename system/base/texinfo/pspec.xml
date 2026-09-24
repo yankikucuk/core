@@ -19,7 +19,6 @@
         <Dependency>help2man</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">texinfo-6.1-install-info-use-create-tmp-then-rename-pattern.patch</Patch> -->
         </Patches>
     </Source>
     <Package>

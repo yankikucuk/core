@@ -14,7 +14,6 @@
         <Description>time utility runs another program, collects information about the resources used by that program while it is running, and displays the results.</Description>
         <Archive sha1sum="eb3fa61608a1379c150929875e7d98b86df68b1f" type="targz">https://ftp.gnu.org/gnu/time/time-1.10.tar.gz</Archive>
         <Patches>
-<!--             <Patch level="1">time-1.7-destdir.patch</Patch> -->
         </Patches>
     </Source>
 

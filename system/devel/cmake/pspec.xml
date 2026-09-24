@@ -20,7 +20,6 @@
             <Dependency>libarchive-devel</Dependency>
             <Dependency>ncurses-devel</Dependency>
             <!--no-system-librhash-->
-<!--             <Dependency>rhash-devel</Dependency> -->
             <Dependency>zlib-devel</Dependency>
             <Dependency>xz-devel</Dependency>
             <Dependency>libuv-devel</Dependency>

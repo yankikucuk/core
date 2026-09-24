@@ -14,7 +14,6 @@
         <Description>gnuconfig contains updated config.sub and config.guess files from GNU.</Description>
         <Archive sha1sum="5c993a002b531c53afdf2aa8b5ee25cd3724a29e" type="tarxz">https://sourceforge.net/projects/pisilinux/files/source/gnuconfig-20250710.tar.xz/download</Archive>
         <BuildDependencies>
-<!--                 <Dependency>readline-devel</Dependency> -->
         </BuildDependencies>
     </Source>
 

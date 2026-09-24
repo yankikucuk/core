@@ -56,23 +56,6 @@
             <Patch level="1">0211-powerpc-ieee1275-load-grub-at-4MB-not-2MB.patch</Patch>
             <Patch level="1">b835601c.patch</Patch>
             <Patch level="1">grub-2.14-revert-image-base.patch</Patch>
-<!--             <Patch level="1">grub-mkconfig_lib.patch</Patch> -->
-<!--             <Patch level="1">mageia/0001-Fix-fgrep-grep-F-warnings.patch</Patch> -->
-<!--             <Patch level="1">0202-templates-Check-for-EFI-at-runtime-instead-of-config.patch</Patch> -->
-<!--             <Patch level="1">0203-efi-Print-an-error-if-boot-to-firmware-setup-is-not-.patch</Patch> -->
-<!--             <Patch level="1">0204-arm64-Fix-EFI-loader-kernel-image-allocation.patch</Patch> -->
-<!--             <Patch level="1">0205-normal-main-Discover-the-device-to-read-the-config-f.patch</Patch> -->
-<!--             <Patch level="1">0206-powerpc-adjust-setting-of-prefix-for-signed-binary-c.patch</Patch> -->
-<!--             <Patch level="1">0207-powerpc-fix-prefix-signed-grub-special-case-for-Powe.patch</Patch> -->
-<!--             <Patch level="1">0208-Arm-check-for-the-PE-magic-for-the-compiled-arch.patch</Patch> -->
-<!--             <Patch level="1">0209-fs-xfs-Fix-unreadable-filesystem-with-v4-superblock.patch</Patch> -->
-<!--             <Patch level="1">0210-Print-module-name-on-license-check-failure.patch</Patch> -->
-<!--             <Patch level="1">Allow_GRUB_to_mount_ext234_filesystems_that_have_the_encryption_feature.patch</Patch> -->
-<!--             <Patch level="1">tsc-Change-default-tsc-calibration-method-to-pmtimer-on-EFI-systems.patch</Patch> -->
-<!--             <Patch level="1">intel-ucode.patch</Patch> -->
-<!--             <Patch level="1">2.02-gcc8.patch</Patch> -->
-<!--             <Patch level="1">0001-grub-install-fix-inverted-test-for-NLS-enabled-when-.patch</Patch> -->
-<!--             <Patch level="1">0006-BootHole.patch</Patch> -->
         </Patches>
     </Source>
 

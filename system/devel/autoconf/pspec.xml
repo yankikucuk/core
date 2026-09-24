@@ -19,10 +19,6 @@
             <Dependency>perl</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch>autoconf-2.69-perl-5.22-autoscan.patch</Patch> -->
-<!--             <Patch>autoconf-2.69-bash-5-LINENO.patch</Patch> -->
-<!--             <Patch>autoconf-2.69-perl-5.28.patch</Patch> -->
-<!--             <Patch>0003-autoconf-2.69-libtool-compatibility.patch</Patch> -->
         </Patches>
     </Source>
 

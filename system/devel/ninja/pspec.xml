@@ -16,11 +16,8 @@
         <BuildDependencies>
             <Dependency>re2c</Dependency>
             <Dependency>asciidoc</Dependency>
-<!--             <Dependency>emacs-python</Dependency> -->
-<!--             <Dependency>giflib-devel</Dependency> -->
         </BuildDependencies>
         <Patches>
-<!--             <Patch>LFS.patch</Patch> -->
         </Patches>
     </Source>
 

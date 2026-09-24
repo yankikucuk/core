@@ -16,13 +16,11 @@
         <Archive sha1sum="a94503bf80f7fab69dc70c4a33247a0124d523b2" type="targz">https://github.com/pallets/jinja/archive/2.11.2.tar.gz</Archive>
         <BuildDependencies>
             <!-- For creating documentations-->
-            <!--<Dependency>python-sphinx</Dependency>-->
             <Dependency>python-setuptools</Dependency>
             <Dependency>python-MarkupSafe</Dependency>
             <Dependency>python-devel</Dependency>
         </BuildDependencies>
         <Patches>
-        <!--<Patch level="1">drop_next_import_from_docs-jinjaext.patch</Patch> -->
         </Patches>
     </Source>
 

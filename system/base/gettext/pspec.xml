@@ -20,11 +20,8 @@
             <Dependency>ncurses-devel</Dependency>
             <Dependency>libunistring-devel</Dependency>
             <Dependency>libxml2-devel</Dependency>
-<!--             <Dependency versionFrom="8.0.1">readline-devel</Dependency> -->
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">gettext-0.21-gnulib-perror-tests.patch</Patch> -->
-<!--             <Patch level="1">fedora/gettext-0.22-disable-libtextstyle.patch</Patch> -->
     </Patches>
     </Source>
 

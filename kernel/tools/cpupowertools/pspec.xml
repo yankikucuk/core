@@ -24,17 +24,10 @@
             <Patch level="1">patches/aufs6/aufs6.18-20260525.patch</Patch>
             <Patch level="1">patches/aufs6/aufs6-base.patch</Patch>
             <Patch level="1">patches/aufs6/aufs6-kbuild.patch</Patch>
-<!--             <Patch level="1">patches/aufs6/aufs6-loopback.patch</Patch> -->
             <Patch level="1">patches/aufs6/aufs6-mmap.patch</Patch>
-<!--             <Patch level="1">patches/aufs6/tmpfs-idr.patch</Patch> -->
-<!--             <Patch level="1">patches/aufs6/vfs-ino.patch</Patch> -->
-<!--             <Patch level="1">patches/aufs6/aufs6-standalone.patch</Patch> -->
 
             <!-- Mageia Linux patches-->
-<!--             <Patch level="1">patches/mageia/fs-procfs-do-not-list-TID-0-in-proc-pid-task.patch</Patch> -->
 
-<!--             <Patch level="1">patches/mageia/CVE-2019-12379.patch</Patch> -->
-<!--             <Patch level="1">patches/mageia/CVE-2020-16119-DCCP-CCID-structure-use-after-free.patch</Patch> -->
             <Patch level="1">patches/mageia/platform-x86-add-shuttle-wmi-driver.patch</Patch>
             <Patch level="1">patches/mageia/platform-x86-shuttle-wmi-4.13-buildfix.patch</Patch>
             <Patch level="1">patches/mageia/platform-x86-shuttle-wmi-4.2-buildfix.patch</Patch>

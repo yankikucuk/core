@@ -17,7 +17,6 @@
             <Dependency>eudev-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">libusb-1.0.24-multi_device_config_parsing.patch</Patch> -->
         </Patches>
     </Source>
 

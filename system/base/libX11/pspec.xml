@@ -22,9 +22,6 @@
             <Dependency>xmlto</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">0001-Revert_Update_XPutBackEvent.diff</Patch> -->
-<!--             <Patch level="1">176.diff</Patch> -->
-<!--             <Patch level="1">177.diff</Patch> -->
         </Patches>
     </Source>
 

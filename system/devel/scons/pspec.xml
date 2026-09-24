@@ -20,7 +20,6 @@
             <Dependency>python3-setuptools</Dependency>
         </BuildDependencies>
         <Patches>
-            <!-- <Patch level="1">missing.patch</Patch> -->
         </Patches>
     </Source>
 

@@ -21,7 +21,6 @@
         <Patches>
             <!-- Disable gz support of pciids file -->
             <Patch level="1">pciutils-nogz.patch</Patch>
-            <!-- <Patch level="1">pciutils-3.1.9-static-pc.patch</Patch> -->
         </Patches>
     </Source>
 

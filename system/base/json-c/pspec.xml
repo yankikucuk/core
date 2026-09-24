@@ -17,7 +17,6 @@
             <Dependency>cmake</Dependency>	
         </BuildDependencies>
         <Patches>
-<!--             <Patch>wno-werror.patch</Patch> -->
         </Patches>
     </Source>
         

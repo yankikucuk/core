@@ -18,10 +18,8 @@
             <Dependency>meson</Dependency>
             <Dependency versionFrom="2.7.3">expat-devel</Dependency>
             <Dependency>libX11-devel</Dependency>
-            <!--<Dependency>doxygen</Dependency>-->
             <Dependency>libcap-ng-devel</Dependency>
             <Dependency>autoconf-archive</Dependency>
-            <!--<Dependency>xmlto</Dependency>-->
         </BuildDependencies>
     </Source>
 
@@ -31,7 +29,6 @@
             <Dependency>expat</Dependency>
             <Dependency>libcap-ng</Dependency>
             <!--libX11 dbus-x11 paketi ayrılınca buradan silinecek-->
-            <!--<Dependency>libX11</Dependency>-->
         </RuntimeDependencies>
         <Files>
             <Path fileType="config">/etc/dbus-1</Path>

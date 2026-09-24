@@ -17,11 +17,6 @@
             <Dependency>ncurses-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">fedora/covscan-findings.patch</Patch> -->
-<!--             <Patch level="1">fedora/free-si-fix.patch</Patch> -->
-<!--             <Patch level="1">fedora/pwait-to-pidwait.patch</Patch> -->
-<!--             <Patch level="1">fedora/sysctl-hyphen-param.patch</Patch> -->
-<!--             <Patch level="1">fedora/sysctl-print-dotted-keys-again.patch</Patch> -->
         </Patches>
     </Source>
 

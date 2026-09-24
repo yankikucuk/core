@@ -28,12 +28,8 @@
             <Dependency>readline-devel</Dependency>
             <Dependency>libxcrypt-devel</Dependency>
             <Dependency>mpdecimal-devel</Dependency>
-            <!--<Dependency>valgrind</Dependency>-->
-            <!--<Dependency>tcl-devel</Dependency>-->
-            <!--<Dependency>tcltk-devel</Dependency>-->
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">115289.patch</Patch> -->
         </Patches>
     </Source>
 

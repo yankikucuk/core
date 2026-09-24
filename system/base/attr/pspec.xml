@@ -15,8 +15,6 @@
         <Description>attr contains a set of tools for manipulating extended attributes on filesystem objects, in particular getfattr and setfattr.</Description>
         <Archive sha1sum="c4f200d61beea5c26d6131288c0df3b5d11b4bfa" type="targz">http://download.savannah.nongnu.org/releases/attr/attr-2.6.0.tar.gz</Archive>
         <BuildDependencies>
-<!--             <Dependency versionFrom="8.0.1">readline-devel</Dependency> -->
-<!--             <Dependency>gawk</Dependency> -->
         </BuildDependencies>
     </Source>
 

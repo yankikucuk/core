@@ -17,11 +17,9 @@
 <!--         <Archive sha1sum="5c2f33c3f3601676f225109231142cdc30d44127" type="targz" target="Python-2.7.18">https://github.com/openssl/openssl/releases/download/openssl-3.4.0/openssl-3.4.0.tar.gz</Archive> -->
         <BuildDependencies>
             <Dependency>bzip2</Dependency>
-            <!--<Dependency>tcl-devel</Dependency>-->
             <Dependency>gdbm-devel</Dependency>
             <Dependency>zlib-devel</Dependency>
             <Dependency versionFrom="2.8.3">expat-devel</Dependency>
-            <!--<Dependency>tcltk-devel</Dependency>-->
             <Dependency>libffi-devel</Dependency>
             <Dependency versionFrom="3.53.4">sqlite-devel</Dependency>
             <Dependency>ncurses-devel</Dependency>
@@ -47,8 +45,6 @@
             <!-- Gentoo patches -->
             <Patch>gentoo/0015-Turkish-locale.patch</Patch>
 
-<!--             <Patch level="1">0020-Disable-modules-and-SSL.patch</Patch> -->
-<!--             <Patch level="1">0022-Non-zero-exit-status-on-failure.patch</Patch> -->
             <Patch level="1">mageia/00354-cve-2020-26116-http-request-method-crlf-injection-in-httplib.patch</Patch>
             <Patch level="1">mageia/00355-CVE-2020-27619.patch</Patch>
             <Patch level="1">mageia/00368-CVE-2021-3737.patch</Patch>
@@ -73,7 +69,6 @@
             <Patch level="1">mageia/00366-CVE-2021-3733.patch</Patch>
 
             <Patch level="1">mageia/0001-bpo-44734-Fix-precision-in-turtle-tests.patch</Patch>
-<!--             <Patch>mageia/00351-cve-2019-20907-fix-infinite-loop-in-tarfile.patch</Patch> -->
         </Patches>
     </Source>
 

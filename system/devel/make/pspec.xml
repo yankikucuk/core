@@ -19,17 +19,14 @@
             <Dependency>gnuconfig</Dependency>
             <Dependency>patch</Dependency>
             <Dependency>gc-devel</Dependency>
-            <!-- <Dependency>guile-devel</Dependency> -->
         </BuildDependencies>
         <Patches>
-            <!-- <Patch>make-4.4-sigpipe.patch</Patch> -->
         </Patches>
     </Source>
 
     <Package>
         <Name>make</Name>
         <RuntimeDependencies>
-            <!-- <Dependency>guile</Dependency> -->
         </RuntimeDependencies>
         <Files>
             <Path fileType="executable">/usr/bin</Path>

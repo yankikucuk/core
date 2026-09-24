@@ -21,10 +21,6 @@
             <Dependency version="5.10.11">kernel-module-headers</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch>kernel-5.3.patch</Patch> -->
-<!--             <Patch>kernel-5.4.patch</Patch> -->
-<!--             <Patch>kernel-5.5.patch</Patch> -->
-<!--             <Patch>kernel-5.6.patch</Patch> -->
         </Patches>
     </Source>
 

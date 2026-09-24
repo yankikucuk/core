@@ -14,7 +14,6 @@
         <Description>This is a library for handling page faults in user mode. A page fault occurs when a program tries to access to a region of memory that is currently not available.</Description>
         <Archive sha1sum="2ac62456ce0834107ed8e5709e91794485c2d8e4" type="targz">mirrors://gnu/libsigsegv/libsigsegv-2.15.tar.gz</Archive>
         <BuildDependencies>
-<!--             <Dependency>readline-devel</Dependency> -->
         </BuildDependencies>
     </Source>
 
@@ -31,7 +30,6 @@
         <Summary>Development files for libsigsegv</Summary>
         <RuntimeDependencies>
             <Dependency release="current">libsigsegv</Dependency>
-<!--             <Dependency>readline-devel</Dependency> -->
         </RuntimeDependencies>
         <Files>
             <Path fileType="header">/usr/include</Path>

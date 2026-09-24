@@ -35,22 +35,15 @@
             <Patch level="1">mandriva/kbd-1.12-data_thai.patch</Patch>
             <Patch level="1">mandriva/kbd-1.15-remove-unneeded-calls.patch</Patch-->
 
-<!--             <Patch level="1">mandriva/kbd-1.15-keycodes-man.patch</Patch> -->
-<!--             <Patch level="1">mandriva/kbd-1.15-sparc.patch</Patch> -->
             <Patch level="1">mandriva/kbd-1.15-unicode_start.patch</Patch>
-<!--             <Patch level="1">mandriva/kbd-1.15.3-dumpkeys-man.patch</Patch> -->
-<!--             <Patch level="1">mandriva/kbd-1.15.5-loadkeys-search-path.patch</Patch> -->
             <Patch level="1">mandriva/kbd-1.15.5-sg-decimal-separator.patch</Patch>
             <Patch level="1">mandriva/kbd-2.4.0-covscan-fixes.patch</Patch>
-<!--             <Patch level="1">mandriva/kbd-1.15.5-vlock-more-pam.patch</Patch> -->
     
             <!-- Archlinux patches -->
             <!--Patch level="1">archlinux/fix-dvorak-es.patch</Patch-->
             <Patch level="1">archlinux/fix-euro2.patch</Patch>
-<!-- 			<Patch level="1">archlinux/kbd-fix-loadkmap-compat.patch</Patch> -->
 
             <!-- Pisi Linux patches -->
-<!--             <Patch level="1">pisilinux/unicode_start-default-font.patch</Patch> -->
             <Patch level="1">pisilinux/tr-keypad-comma.patch</Patch>
             <Patch level="1">pisilinux/tr-no-meta_space.patch</Patch>
             <Patch level="1">pisilinux/trq-capslock-fix.patch</Patch>

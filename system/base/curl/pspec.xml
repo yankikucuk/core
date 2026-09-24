@@ -26,8 +26,6 @@
             <Dependency versionFrom="1.69.0">libnghttp2-devel</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch>52e822173aa3cd4f610531d32fbf943f026cdca6.diff</Patch> -->
-<!--             <Patch>curl-ac.patch</Patch> -->
         </Patches>
     </Source>
 

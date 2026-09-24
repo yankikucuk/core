@@ -17,11 +17,8 @@
         <Description>XZ Utils provide a general purpose data compression library and command line tools. The .xz format supports multiple compression algorithms, which are called "filters" in context of XZ Utils. The primary filter is currently LZMA2.</Description>
         <Archive sha1sum="121617cb43be0539b76384d3d6902a7469bdae86" type="targz">https://github.com/tukaani-project/xz/releases/download/v5.8.4/xz-5.8.4.tar.gz</Archive>
         <BuildDependencies>
-<!--             <Dependency versionFrom="8.0.1">readline-devel</Dependency> -->
-<!--             <Dependency versionFrom="2.30">glibc-devel</Dependency> -->
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">xzgrep-ZDI-CAN-16587.patch</Patch> -->
         </Patches>
     </Source>
 

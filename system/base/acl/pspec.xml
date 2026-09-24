@@ -17,7 +17,6 @@
         <Archive sha1sum="2f433ff32b2cf277ff08361e482ed03fe4be6b0d" type="targz">http://download.savannah.gnu.org/releases/acl/acl-2.4.0.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>attr-devel</Dependency>
-<!--             <Dependency versionFrom="8.0.1">readline-devel</Dependency> -->
         </BuildDependencies>
     </Source>
     <Package>

@@ -15,7 +15,6 @@
         <Description>mailcap file is used by the metamail program. Metamail reads the mailcap file to determine how it should display non-text or multimedia material.</Description>
         <Archive sha1sum="448f6bd36925d1379e2109b6682fc8b649fbbf21" type="tarxz">https://releases.pagure.org/mailcap/mailcap-2.1.48.tar.xz</Archive>
         <Patches>
-            <!--<Patch level="1">sync-with-git-20110601.patch</Patch>-->
             <Patch level="1">extend-mailcap.patch</Patch>
         </Patches>
     </Source>

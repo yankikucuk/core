@@ -21,7 +21,6 @@
             <Dependency>glibc-devel</Dependency>
             <Dependency>libkmod-devel</Dependency>
             <Dependency versionFrom="2.38.1">libutil-linux-devel</Dependency>
-<!--             <Dependency>libpcre-devel</Dependency> -->
             <Dependency>libxslt-devel</Dependency>
             <Dependency>gperf</Dependency>
             <Dependency>intltool</Dependency>

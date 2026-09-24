@@ -14,9 +14,6 @@
         <Description>Yacc provides a general tool for describing the input to a computer program. The Yacc user specifies the structures of his input, together with code to be invoked as each such structure is recognized. Yacc turns such a specification into a subroutine that handles the input process</Description>
         <Archive sha1sum="9e22f26cbedd63bcc4f6ec5fc07acee9e5d0bdb1" type="targz">https://invisible-mirror.net/archives/byacc/byacc-20260126.tgz</Archive>
         <Patches>
-<!--             <Patch>mkstemp.patch</Patch> -->
-<!--             <Patch level="1">skeleton.c.diff</Patch> -->
-<!--             <Patch level="1">yacc-1.9.1-ia64.patch</Patch> -->
         </Patches>
     </Source>
 

@@ -22,7 +22,6 @@
             <Patch>ca-certificates-etc-certs.patch</Patch>
             <Patch>ca-certificates-DESTDIR.patch</Patch>
             <Patch>ca-certificates.d.patch</Patch-->
-<!--             <Patch>no-openssl-rehash.patch</Patch> -->
         </Patches>
     </Source>
 

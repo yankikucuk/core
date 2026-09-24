@@ -36,7 +36,6 @@
             <Patch level="1">lvm2-2.02.166-HPPA-no-O_DIRECT.patch</Patch>
             <Patch level="1">lvm2-2.02.184-mksh_build.patch</Patch>
             <Patch level="1">lvm2-2.02.186-udev_remove_unsupported_option.patch</Patch-->
-<!--             <Patch level="1">fix-stdio-usage.patch</Patch> -->
             <Patch level="1">mlockall-default-config.patch</Patch>
             <Patch level="1">lvm2-2.03.20-dm_lvm_rules_no_systemd.patch</Patch>
         </Patches>

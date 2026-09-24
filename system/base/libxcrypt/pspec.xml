@@ -21,7 +21,6 @@
     <Package>
         <Name>libxcrypt</Name>
         <RuntimeDependencies>
-<!--             <Dependency></Dependency> -->
         </RuntimeDependencies>
         <Files>
             <Path fileType="library">/lib</Path>
@@ -37,7 +36,6 @@
         <Summary>32-bit shared libraries for libxcrypt</Summary>
         <BuildType>emul32</BuildType>
         <BuildDependencies>
-<!--             <Dependency>libpng-32bit</Dependency> -->
         </BuildDependencies>
         <RuntimeDependencies>
             <Dependency release="current">libxcrypt</Dependency>

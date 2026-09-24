@@ -15,8 +15,6 @@
 <!--         <Archive sha1sum="bb5eb3f34b3ecd5bac8d0b58164b847f135b3d62" type="targz">mirrors://gnu/ncurses/ncurses-6.4.tar.gz</Archive> -->
         <Archive sha1sum="c2860a6dc25a74232a3241ccf3e119a8ba81d7ab" type="targz">https://github.com/ThomasDickey/ncurses-snapshots/archive/refs/tags/v6_5_20250802.tar.gz</Archive>
         <BuildDependencies>
-<!--             <Dependency>gnuconfig</Dependency> -->
-<!--             <Dependency>readline-devel</Dependency> -->
         </BuildDependencies>
     </Source>
 

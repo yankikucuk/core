@@ -16,14 +16,12 @@
         <BuildDependencies>
             <Dependency>scdoc</Dependency>
             <Dependency>chrpath</Dependency>
-            <!--<Dependency>libxslt</Dependency>-->
             <Dependency>xz-devel</Dependency>
             <Dependency>zstd-devel</Dependency>
             <Dependency>zlib-devel</Dependency>
             <Dependency>kernel-module-headers</Dependency>
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">kmod-configure-c99.patch</Patch> -->
         </Patches>
     </Source>
 

@@ -24,11 +24,8 @@
             <Dependency>python3-jaraco-functools</Dependency>
             <Dependency>python3-jaraco.collections</Dependency>
             <Dependency>python3-backports_tarfile</Dependency>
-            <!--<Dependency>python3-packaging</Dependency>-->
         </BuildDependencies>
         <Patches>
-<!--             <Patch level="1">fedora/Adjust-the-setup.py-install-deprecation-message.patch</Patch> -->
-<!--             <Patch level="1">fedora/Revert-Always-rewrite-a-Python-shebang-to-python.patch</Patch> -->
         </Patches>
     </Source>
 
