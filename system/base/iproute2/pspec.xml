@@ -1,0 +1,193 @@
+<?xml version="1.0" ?>
+<!DOCTYPE PISI SYSTEM "http://www.pisilinux.org/projeler/pisi/pisi-spec.dtd">
+<PISI>
+    <Source>
+        <Name>iproute2</Name>
+        <Homepage>https://wiki.linuxfoundation.org/networking/iproute2</Homepage>
+        <Packager>
+            <Name>PisiLinux Community</Name>
+            <Email>admins@pisilinux.org</Email>
+        </Packager>
+        <License>GPLv2</License>
+        <IsA>app:console</IsA>
+        <Icon>network-server</Icon>
+        <Summary>Kernel routing and traffic control utilities</Summary>
+        <Description>Iproute2 is a collection of utilites for controlling TCP/IP networking and traffic control in Linux.</Description>
+        <Archive sha1sum="0ea819048a2f2c782d5757a28ac03ae367931504" type="tarxz">https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-6.19.0.tar.xz</Archive>
+        <!-- linux-atm and iptables stay in main: tc's atm qdisc and ipt action
+             are optional extras, and core has to build from core alone -->
+        <BuildDependencies>
+            <Dependency>db-devel</Dependency>
+            <Dependency>zlib-devel</Dependency>
+            <Dependency>libbsd-devel</Dependency>
+            <Dependency>libcap-devel</Dependency>
+            <Dependency>libmnl-devel</Dependency>
+            <Dependency>libtirpc-devel</Dependency>
+            <Dependency>elfutils-devel</Dependency>
+        </BuildDependencies>
+        <Patches>
+<!--             <Patch>0001-make-iproute2-fhs-compliant.patch</Patch> -->
+        </Patches>
+    </Source>
+
+    <Package>
+        <Name>iproute2</Name>
+        <RuntimeDependencies>
+            <Dependency>db</Dependency>
+            <Dependency>elfutils</Dependency>
+            <Dependency>libcap</Dependency>
+            <Dependency>libmnl</Dependency>
+            <Dependency>libbsd</Dependency>
+            <Dependency>libtirpc</Dependency>
+            <Dependency>linux-atm</Dependency>
+        </RuntimeDependencies>
+        <Files>
+            <Path fileType="config">/etc</Path>
+            <Path fileType="executable">/sbin</Path>
+            <Path fileType="library">/usr/lib</Path>
+            <Path fileType="header">/usr/include</Path>
+            <Path fileType="data">/usr/share/tc</Path>
+            <Path fileType="man">/usr/share/man</Path>
+            <Path fileType="doc">/usr/share/doc</Path>
+            <Path fileType="data">/usr/share/bash-completion</Path>
+            <Path fileType="data">/var/lib</Path>
+            <Path fileType="data">/usr/share/iproute2</Path>
+        </Files>
+    </Package>
+
+    <History>
+        <Update release="19">
+            <Date>2026-09-24</Date>
+            <Version>6.19.0</Version>
+            <Comment>Moved from main to core and updated to 6.19.0 (kernel.org release tarball). Built without the ATM and xtables extras so core stays self-contained.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
+        <Update release="18">
+            <Date>2024-11-19</Date>
+            <Version>6.12.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Pisi Linux Community</Name>
+            <Email>admin@pisilinux.org</Email>
+        </Update>
+        <Update release="17">
+            <Date>2024-07-19</Date>
+            <Version>6.10.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Pisi Linux Community</Name>
+            <Email>admin@pisilinux.org</Email>
+        </Update>
+        <Update release="16">
+            <Date>2023-11-06</Date>
+            <Version>6.6.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="15">
+            <Date>2023-09-07</Date>
+            <Version>6.5.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="14">
+            <Date>2023-06-27</Date>
+            <Version>6.4.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="13">
+            <Date>2023-04-28</Date>
+            <Version>6.3.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="12">
+            <Date>2022-08-03</Date>
+            <Version>5.19.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="11">
+            <Date>2021-09-02</Date>
+            <Version>5.14.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="10">
+            <Date>2021-07-02</Date>
+            <Version>5.13.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="9">
+            <Date>2021-01-23</Date>
+            <Version>5.10.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="8">
+            <Date>2020-02-01</Date>
+            <Version>5.4.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+         <Update release="7">
+            <Date>2019-04-23</Date>
+            <Version>4.19.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Ertuğrul Erata</Name>
+            <Email>ertugrulerata@gmail.com</Email>
+        </Update>
+        <Update release="6">
+            <Date>2018-08-13</Date>
+            <Version>4.15.0</Version>
+            <Comment>Rebuild New T.</Comment>
+            <Name>Mustafa Cinasal</Name>
+            <Email>muscnsl@gmail.com</Email>
+        </Update>
+        <Update release="5">
+            <Date>2018-06-09</Date>
+            <Version>4.14.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Ertuğrul Erata</Name>
+            <Email>ertugrulerata@gmail.com</Email>
+        </Update>
+        <Update release="4">
+            <Date>2017-01-29</Date>
+            <Version>4.9.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Ertuğrul Erata</Name>
+            <Email>ertugrulerata@gmail.com</Email>
+        </Update>
+        <Update release="3">
+            <Date>2016-10-19</Date>
+            <Version>4.8.0</Version>
+            <Comment>Version bump.</Comment>
+            <Name>Ertuğrul Erata</Name>
+            <Email>ertugrulerata@gmail.com</Email>
+        </Update>
+        <Update release="2">
+            <Date>2016-06-09</Date>
+            <Version>4.4.0</Version>
+            <Comment>Release Bump</Comment>
+            <Name>Pisi Linux Community</Name>
+            <Email>admin@pisilinux.org</Email>
+        </Update>
+        <Update release="1">
+            <Date>2016-03-05</Date>
+            <Version>4.4.0</Version>
+            <Comment>First release</Comment>
+            <Name>Ertuğrul Erata</Name>
+            <Email>ertugrulerata@gmail.com</Email>
+        </Update>
+    </History>
+</PISI>
