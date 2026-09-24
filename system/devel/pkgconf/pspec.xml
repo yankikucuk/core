@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<!DOCTYPE PISI SYSTEM "https://www.pisilinux.org/projeler/pisi/pisi-spec.dtd">
+<PISI>
+    <Source>
+        <Name>pkgconf</Name>
+        <Homepage>https://gitea.treehouse.systems/ariadne/pkgconf</Homepage>
+        <Packager>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Packager>
+        <License>ISC</License>
+        <IsA>app:console</IsA>
+        <Summary>Package compiler and linker metadata toolkit</Summary>
+        <Description>pkgconf is a program which helps to configure compiler and linker flags for development libraries. It is a compatible replacement for pkg-config (the pkg-config name is provided by the pkgconfig package) and also offers libpkgconf for programs that need to resolve .pc files themselves.</Description>
+        <Archive sha1sum="c899413b2e1166b7fb5d21fca6fccd0f775fed15" type="tarxz">https://distfiles.ariadne.space/pkgconf/pkgconf-3.0.7.tar.xz</Archive>
+        <BuildDependencies>
+            <Dependency>meson</Dependency>
+            <Dependency>ninja</Dependency>
+        </BuildDependencies>
+    </Source>
+
+    <Package>
+        <Name>pkgconf</Name>
+        <Files>
+            <Path fileType="executable">/usr/bin/pkgconf</Path>
+            <Path fileType="executable">/usr/bin/bomtool</Path>
+            <Path fileType="executable">/usr/bin/pccritic</Path>
+            <Path fileType="executable">/usr/bin/spdxtool</Path>
+            <Path fileType="library">/usr/lib/libpkgconf.so.*</Path>
+            <Path fileType="data">/usr/share/aclocal</Path>
+            <Path fileType="man">/usr/share/man/man1</Path>
+            <Path fileType="man">/usr/share/man/man5</Path>
+            <Path fileType="man">/usr/share/man/man7</Path>
+            <Path fileType="doc">/usr/share/doc</Path>
+        </Files>
+    </Package>
+
+    <Package>
+        <Name>pkgconf-devel</Name>
+        <Summary>Development files for libpkgconf</Summary>
+        <IsA>library</IsA>
+        <RuntimeDependencies>
+            <Dependency release="current">pkgconf</Dependency>
+        </RuntimeDependencies>
+        <Files>
+            <Path fileType="header">/usr/include</Path>
+            <Path fileType="library">/usr/lib/libpkgconf.so</Path>
+            <Path fileType="data">/usr/lib/pkgconfig</Path>
+            <Path fileType="man">/usr/share/man/man3</Path>
+        </Files>
+    </Package>
+
+    <Package>
+        <!-- The name every recipe in core and main depends on: it now
+             carries only the pkg-config compatibility link and the shared
+             .pc directories, so those recipes keep working unchanged. -->
+        <Name>pkgconfig</Name>
+        <Summary>pkg-config command provided by pkgconf</Summary>
+        <RuntimeDependencies>
+            <Dependency release="current">pkgconf</Dependency>
+        </RuntimeDependencies>
+        <Files>
+            <Path fileType="executable">/usr/bin/pkg-config</Path>
+            <Path fileType="data">/usr/share/pkgconfig</Path>
+        </Files>
+    </Package>
+
+    <History>
+        <Update release="1">
+            <Date>2026-09-24</Date>
+            <Version>3.0.7</Version>
+            <Comment>First release. Replaces the pkg-config 0.29.2 recipe (last upstream release 2017); the pkgconfig package name stays as the compatibility package.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
+    </History>
+</PISI>
