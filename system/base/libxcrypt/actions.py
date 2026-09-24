@@ -11,7 +11,13 @@ from pisi.actionsapi import get
 
 import os
 
-arch = "x86-64" if get.ARCH() == "x86_64" and not get.buildTYPE() == "emul32" else "i686"
+# -march for this build: the 32-bit multilib pass on x86_64 targets i686
+if get.buildTYPE() == "emul32" or get.isI686():
+    arch = "i686"
+elif get.isAARCH64():
+    arch = "armv8-a"
+else:
+    arch = "x86-64"
 defaultflags = "-O3 -g -fasynchronous-unwind-tables -mtune=generic -march=%s" % arch
 if get.buildTYPE() == "emul32": defaultflags += " -m32"
 
@@ -35,7 +41,8 @@ def setup():
                          --disable-static \
                          --enable-hashes=strong,glibc \
                          --enable-obsolete-api=no \
-                         --disable-failure-tokens")
+                         --disable-failure-tokens \
+                           --disable-werror")
 
         shelltools.cd("..")
 
@@ -45,7 +52,8 @@ def setup():
                          --disable-static \
                          --enable-hashes=strong,glibc \
                          --enable-obsolete-api=glibc \
-                         --disable-failure-tokens")
+                         --disable-failure-tokens \
+                           --disable-werror")
 
         shelltools.cd("..")
 
@@ -61,6 +69,7 @@ def setup():
                            --enable-hashes=strong,glibc \
                            --enable-obsolete-api=no \
                            --disable-failure-tokens \
+                           --disable-werror \
                            --enable-multi-arch i686-pc-linux-gnu")
 
         shelltools.cd("..")
@@ -74,6 +83,7 @@ def setup():
                           --enable-hashes=strong,glibc \
                           --enable-obsolete-api=glibc \
                           --disable-failure-tokens \
+                           --disable-werror \
                           --enable-multi-arch i686-pc-linux-gnu")
 
         # shelltools.cd("..")
