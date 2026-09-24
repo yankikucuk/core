@@ -9,6 +9,9 @@ from pisi.actionsapi import pisitools
 from pisi.actionsapi import shelltools
 from pisi.actionsapi import get
 
+# OpenSSL's Configure target for the 64-bit build
+openssl_target = "linux-aarch64" if get.isAARCH64() else "linux-x86_64"
+
 def setup():
     pisitools.dosed("Configure", " $prefix/$libdir/engines ", " /%{_lib}/engines ")
     
@@ -27,14 +30,14 @@ def setup():
         shelltools.system("./Configure linux-elf %s" % options)
         shelltools.export("PKG_CONFIG_PATH","/usr/lib32/pkgconfig")
         
-    elif get.ARCH() == "i686":
+    elif get.isI686():
          shelltools.system("./Configure linux-elf %s" % options)
          pisitools.dosed("Makefile", "^(SHARED_LDFLAGS=).*", "\\1 ${LDFLAGS}")
          pisitools.dosed("Makefile", "^(CFLAG=.*)", "\\1 ${CFLAGS}")
          
     else:
         options += " enable-ec_nistp_64_gcc_128"
-        shelltools.system("./Configure linux-x86_64 %s" % options)
+        shelltools.system("./Configure %s %s" % (openssl_target, options))
         pisitools.dosed("Makefile", "^(SHARED_LDFLAGS=).*", "\\1 ${LDFLAGS}")
         pisitools.dosed("Makefile", "^(CFLAG=.*)", "\\1 ${CFLAGS}")
 
@@ -56,14 +59,14 @@ def setup():
         shelltools.system("./Configure linux-elf %s" % options)
         shelltools.export("PKG_CONFIG_PATH","/usr/lib32/pkgconfig")
 
-    elif get.ARCH() == "i686":
+    elif get.isI686():
          shelltools.system("./Configure linux-elf %s" % options)
          pisitools.dosed("Makefile", "^(SHARED_LDFLAGS=).*", "\\1 ${LDFLAGS}")
          pisitools.dosed("Makefile", "^(CFLAG=.*)", "\\1 ${CFLAGS}")
 
     else:
         options += " enable-ec_nistp_64_gcc_128"
-        shelltools.system("./Configure linux-x86_64 %s" % options)
+        shelltools.system("./Configure %s %s" % (openssl_target, options))
         pisitools.dosed("Makefile", "^(SHARED_LDFLAGS=).*", "\\1 ${LDFLAGS}")
         pisitools.dosed("Makefile", "^(CFLAG=.*)", "\\1 ${CFLAGS}")
 
