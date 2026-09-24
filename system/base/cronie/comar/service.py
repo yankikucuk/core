@@ -7,14 +7,15 @@ serviceDefault = "on"
 
 @synchronized
 def start():
-    startService(command="/usr/sbin/cron",
-                 pidfile="/var/run/cron.pid",
+    # crond forks itself and writes its pid file; no -n (foreground) here
+    startService(command="/usr/sbin/crond",
+                 pidfile="/run/crond.pid",
                  donotify=True)
 
 @synchronized
 def stop():
-    stopService(pidfile="/var/run/cron.pid",
+    stopService(pidfile="/run/crond.pid",
                 donotify=True)
 
 def status():
-    return isServiceRunning("/var/run/cron.pid")
+    return isServiceRunning("/run/crond.pid")

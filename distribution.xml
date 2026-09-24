@@ -29,5 +29,7 @@
            <Package>mkinitcpio</Package>
            <Package>Calamares</Package>
            <Package>calamares-theme-pisilinux</Package>
+           <!-- vixie-cron 4.1 (2004) is replaced by cronie -->
+           <Package>vixie-cron</Package>
       </Obsoletes>
 </PISI>

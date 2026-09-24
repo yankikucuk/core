@@ -1,0 +1,8 @@
+# System crontab. Hourly jobs run from here; daily, weekly and monthly
+# directories are run by anacron (see /etc/cron.hourly/0anacron and
+# /etc/anacrontab), so they are also executed on machines that were off.
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# minute hour day month weekday user command
+01 * * * * root run-parts /etc/cron.hourly

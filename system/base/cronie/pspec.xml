@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!DOCTYPE PISI SYSTEM "https://www.pisilinux.org/projeler/pisi/pisi-spec.dtd">
+<PISI>
+    <Source>
+        <Name>cronie</Name>
+        <Homepage>https://github.com/cronie-crond/cronie</Homepage>
+        <Packager>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Packager>
+        <License>ISC</License>
+        <IsA>service</IsA>
+        <Summary>Daemon that runs specified programs at scheduled times</Summary>
+        <Description>cronie is the maintained fork of Vixie cron: a daemon that runs scheduled jobs from system and user crontabs and, through anacron, catches up on daily, weekly and monthly jobs missed while the machine was off.</Description>
+        <Archive sha1sum="0fa5eb269221b220a9dd7fa344b7936e64528615" type="targz">https://github.com/cronie-crond/cronie/releases/download/cronie-1.7.2/cronie-1.7.2.tar.gz</Archive>
+        <BuildDependencies>
+            <Dependency>pam-devel</Dependency>
+        </BuildDependencies>
+    </Source>
+
+    <Package>
+        <Name>cronie</Name>
+        <RuntimeDependencies>
+            <Dependency>pam</Dependency>
+            <Dependency>run-parts</Dependency>
+            <Dependency>comar-api</Dependency>
+        </RuntimeDependencies>
+        <!-- vixie-cron 4.1 (2004) is replaced: same spool layout, same
+             crontab command, so existing user crontabs keep working. -->
+        <Replaces>
+            <Package>vixie-cron</Package>
+        </Replaces>
+        <Conflicts>
+            <Package>vixie-cron</Package>
+        </Conflicts>
+        <Files>
+            <Path fileType="executable">/usr/sbin</Path>
+            <Path fileType="executable">/usr/bin</Path>
+            <Path fileType="config">/etc</Path>
+            <Path fileType="data">/var/spool</Path>
+            <Path fileType="doc">/usr/share/doc</Path>
+            <Path fileType="man">/usr/share/man</Path>
+        </Files>
+        <Provides>
+            <COMAR script="service.py">System.Service</COMAR>
+            <COMAR script="package.py">System.Package</COMAR>
+        </Provides>
+        <AdditionalFiles>
+            <AdditionalFile owner="root" permission="0644" target="/etc/pam.d/crond">crond.pam.d</AdditionalFile>
+            <AdditionalFile owner="root" permission="0644" target="/etc/crontab">crontab</AdditionalFile>
+            <AdditionalFile owner="root" permission="0644" target="/etc/cron.deny">cron.deny</AdditionalFile>
+        </AdditionalFiles>
+    </Package>
+
+    <History>
+        <Update release="1">
+            <Date>2026-09-24</Date>
+            <Version>1.7.2</Version>
+            <Comment>First release. Replaces vixie-cron 4.1, whose upstream ended in 2004; cronie is the maintained fork with PAM, inotify and anacron.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
+    </History>
+</PISI>
