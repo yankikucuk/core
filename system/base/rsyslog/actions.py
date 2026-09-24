@@ -10,12 +10,18 @@ from pisi.actionsapi import pisitools
 
 
 def setup():
+    # 8.26 dropped --enable-cached-man-pages, --enable-pmrfc3164sd,
+    # --enable-sm_cust_bindcdr and --enable-zlib (zlib support is unconditional now).
+    # libyaml lives in main and is only needed by the mmyaml module: keep core free of it.
+    # impstats-push (new, on by default with impstats) needs protobuf-c, also main-only.
     #pisitools.cflags.add('-fpie -DSYSLOGD_PIDNAME=\\"syslogd.pid\\"')
     pisitools.ldflags.add("-pie -Wl,-z,relro -Wl,-z,now")
 
     autotools.configure("\
                          --sbindir=/usr/bin \
                          --disable-gui \
+                         --disable-libyaml \
+                         --disable-impstats-push \
                          --disable-mysql \
                          --disable-pgsql \
                          --disable-relp \
@@ -29,7 +35,6 @@ def setup():
                          --disable-generate-man-pages \
                          --disable-uuid \
                          --enable-mail \
-                         --enable-zlib \
                          --enable-imdiag \
                          --enable-imfile \
                          --enable-imptcp \
@@ -43,12 +48,9 @@ def setup():
                          --enable-largefile \
                          --enable-pmlastmsg \
                          --enable-mmjsonparse \
-                         --enable-pmrfc3164sd \
                          --enable-pmcisconames \
-                         --enable-sm_cust_bindcdr \
                          --enable-unlimited-select \
                          --enable-pmaixforwardedfrom \
-                         --enable-cached-man-pages \
                          --with-systemdsystemunitdir=no \
                         ")
 
