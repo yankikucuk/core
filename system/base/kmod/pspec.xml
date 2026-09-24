@@ -157,7 +157,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="10">
+        <Update release="10">
             <Date>2019-12-25</Date>
             <Version>26</Version>
             <Comment>Version bump</Comment>

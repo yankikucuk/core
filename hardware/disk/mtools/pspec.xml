@@ -76,7 +76,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="5">
+        <Update release="5">
             <Date>2019-12-27</Date>
             <Version>4.0.18</Version>
             <Comment>Rebuild</Comment>
@@ -104,7 +104,7 @@
             <Name>PisiLinux Community</Name>
             <Email>admin@pisilinux.org</Email>
         </Update>
-	    <Update release="1">
+        <Update release="1">
             <Date>2014-02-12</Date>
             <Version>4.0.18</Version>
             <Comment>First release</Comment>

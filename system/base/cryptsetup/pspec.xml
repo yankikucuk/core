@@ -22,8 +22,8 @@
             <Dependency>libutil-linux-devel</Dependency>
             <Dependency versionFrom="1.19">popt-devel</Dependency>
             <Dependency>popt</Dependency>
-			<Dependency>openssl-devel</Dependency>
-			<Dependency>json-c-devel</Dependency>
+            <Dependency>openssl-devel</Dependency>
+            <Dependency>json-c-devel</Dependency>
         </BuildDependencies>
     </Source>
 
@@ -33,7 +33,7 @@
         <RuntimeDependencies>
             <Dependency version="current">libcryptsetup</Dependency>
             <Dependency>popt</Dependency>
-			<Dependency>libutil-linux</Dependency>
+            <Dependency>libutil-linux</Dependency>
         </RuntimeDependencies>
         <Files>
             <Path fileType="executable">/sbin</Path>
@@ -52,8 +52,8 @@
             <Dependency>libgpg-error</Dependency>
             <Dependency>libgcrypt</Dependency>
             <Dependency>libutil-linux</Dependency>
-			<Dependency>openssl</Dependency>
-			<Dependency>json-c</Dependency>
+            <Dependency>openssl</Dependency>
+            <Dependency>json-c</Dependency>
         </RuntimeDependencies>
         <Files>
             <Path fileType="library">/lib/cryptsetup</Path>

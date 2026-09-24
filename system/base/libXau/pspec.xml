@@ -34,7 +34,7 @@
         <Summary>Development files for libXau</Summary>
         <RuntimeDependencies>
             <Dependency release="current">libXau</Dependency>
-			<Dependency>xorg-proto</Dependency>
+            <Dependency>xorg-proto</Dependency>
         </RuntimeDependencies>
         <Files>
             <Path fileType="header">/usr/include/X11</Path>

@@ -16,7 +16,7 @@
         <BuildDependencies>
             <Dependency>meson</Dependency>
             <Dependency versionFrom="1.19.3">util-macros</Dependency>
-	    <!--remove for fix cycle dep-->
+        <!--remove for fix cycle dep-->
             <!--Dependency>libxslt</Dependency-->
         </BuildDependencies>
         <Patches>
@@ -111,7 +111,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="9">
+        <Update release="9">
             <Date>2020-01-15</Date>
             <Version>2019.2</Version>
             <Comment>Rebuild</Comment>

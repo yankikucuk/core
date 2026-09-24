@@ -16,7 +16,7 @@
             <Dependency>lzo-devel</Dependency>
             <Dependency>lz4-devel</Dependency>
             <Dependency>zlib-devel</Dependency>
-			<Dependency>cmake</Dependency>
+            <Dependency>cmake</Dependency>
         </BuildDependencies>
         <Archive sha1sum="09171ad0f0b43d2c7f0d5f787a2ac907c6ba7c80" type="targz">https://github.com/google/snappy/archive/1.2.2.tar.gz</Archive>
         <Patches>
@@ -42,8 +42,8 @@
             <AdditionalFile owner="root" permission="0644" target="/usr/lib/pkgconfig/snappy.pc">snappy.pc</AdditionalFile>
         </AdditionalFiles>
         <Files>
-			<Path fileType="header">/usr/lib/pkgconfig</Path>
-			<Path fileType="header">/usr/include</Path>
+            <Path fileType="header">/usr/lib/pkgconfig</Path>
+            <Path fileType="header">/usr/include</Path>
         </Files>
     </Package>
     <History>
@@ -68,7 +68,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="5">
+        <Update release="5">
             <Date>2019-12-27</Date>
             <Version>1.1.7</Version>
             <Comment>Version bump</Comment>

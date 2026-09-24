@@ -57,11 +57,11 @@
         <BuildType>emul32</BuildType>
         <BuildDependencies>
             <Dependency>libgpg-error-32bit</Dependency>
-	    
+        
         </BuildDependencies>
         <RuntimeDependencies>
             <Dependency>libgpg-error-32bit</Dependency>
-	    
+        
             <Dependency release="current">libgcrypt</Dependency>
         </RuntimeDependencies>
         <Files>
@@ -126,7 +126,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="8">
+        <Update release="8">
             <Date>2019-12-23</Date>
             <Version>1.8.5</Version>
             <Comment>Version bump</Comment>

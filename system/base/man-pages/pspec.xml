@@ -82,7 +82,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="8">
+        <Update release="8">
             <Date>2019-12-27</Date>
             <Version>5.04</Version>
             <Comment>Version bump.</Comment>

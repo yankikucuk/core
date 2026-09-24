@@ -218,7 +218,7 @@
             <Name>PisiLinux Community</Name>
             <Email>admin@pisilinux.org</Email>
         </Update>
-		<Update release="10">
+        <Update release="10">
             <Date>2019-12-27</Date>
             <Version>2.6</Version>
             <Comment>Rebuild</Comment>

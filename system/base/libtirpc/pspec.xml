@@ -112,7 +112,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="3">
+        <Update release="3">
             <Date>2020-01-19</Date>
             <Version>1.2.5</Version>
             <Comment>Version bump</Comment>

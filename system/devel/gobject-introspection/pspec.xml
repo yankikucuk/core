@@ -243,7 +243,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-	    <Update release="28">
+        <Update release="28">
             <Date>2023-04-17</Date>
             <Version>1.76.1</Version>
             <Comment>Rebuild.</Comment>
@@ -390,14 +390,14 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="7">
+        <Update release="7">
             <Date>2020-11-07</Date>
             <Version>1.66.0</Version>
             <Comment>Version bump.</Comment>
             <Name>Idris Kalp</Name>
             <Email>idriskalp@gmail.com</Email>
         </Update>
-		<Update release="6">
+        <Update release="6">
             <Date>2019-12-26</Date>
             <Version>1.62.0</Version>
             <Comment>Version bump.</Comment>

@@ -41,7 +41,7 @@
             <Name>Idris Kalp</Name>
             <Email>idriskalp@gmail.com</Email>
         </Update>
-		<Update release="5">
+        <Update release="5">
             <Date>2019-12-22</Date>
             <Version>20191222</Version>
             <Comment>Version bump</Comment>

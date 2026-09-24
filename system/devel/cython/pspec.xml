@@ -27,7 +27,7 @@
         <Name>cython</Name>
         <RuntimeDependencies>
             <Dependency>python</Dependency>
-			<Dependency>bzip2</Dependency>
+            <Dependency>bzip2</Dependency>
         </RuntimeDependencies>
         <Files>
             <Path fileType="executable">/usr/bin</Path>

@@ -415,7 +415,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="8">
+        <Update release="8">
             <Date>2019-10-02</Date>
             <Version>3.16.2</Version>
             <Comment>Ver bump</Comment>

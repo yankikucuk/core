@@ -36,8 +36,8 @@
             <Patch>openssl-find.patch</Patch>
             <Patch>pic.patch</Patch>
             <Patch>openssl_fix_for_x32.patch</Patch>-->
-			
-			<Patch level="1">openssl-1.0.2a-x32-asm.patch</Patch>
+            
+            <Patch level="1">openssl-1.0.2a-x32-asm.patch</Patch>
 <!-- 			<Patch level="1">openssl-1.1.0l-fix-no-ec2m-in-ec_curve.c.patch</Patch> -->
 <!-- 			<Patch level="1">openssl-1.1.1d-fix-potential-memleaks-w-BN_to_ASN1_INTEGER.patch</Patch> -->
 <!-- 			<Patch level="1">openssl-1.1.1d-fix-zlib.patch</Patch> -->

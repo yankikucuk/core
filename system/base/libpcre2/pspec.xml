@@ -120,21 +120,21 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-	<Update release="4">
+    <Update release="4">
             <Date>2020-12-09</Date>
             <Version>10.35</Version>
             <Comment>Version bump</Comment>
             <Name>PisiLinux Community</Name>
             <Email>admins@pisilinux.org</Email>
         </Update>
-	<Update release="3">
+    <Update release="3">
             <Date>2020-04-02</Date>
             <Version>10.34</Version>
             <Comment>Rebuild</Comment>
             <Name>PisiLinux Community</Name>
             <Email>admins@pisilinux.org</Email>
         </Update>
-	<Update release="2">
+    <Update release="2">
             <Date>2019-12-22</Date>
             <Version>10.34</Version>
             <Comment>Version bump</Comment>

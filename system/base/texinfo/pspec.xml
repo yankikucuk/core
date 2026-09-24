@@ -14,9 +14,9 @@
         <Description>Texinfo is a documentation system that can produce both online information and printed output from a single source file. The GNU Project uses the Texinfo file format for most of its documentation.</Description>
         <Archive sha1sum="597860aaea150a8e157f63abddf1a9df75ee9ffb" type="targz">mirrors://gnu/texinfo/texinfo-7.3.tar.gz</Archive>
         <BuildDependencies>
-		<Dependency>ncurses-devel</Dependency>
-		<Dependency>perl</Dependency>
-		<Dependency>help2man</Dependency>
+        <Dependency>ncurses-devel</Dependency>
+        <Dependency>perl</Dependency>
+        <Dependency>help2man</Dependency>
         </BuildDependencies>
         <Patches>
 <!--             <Patch level="1">texinfo-6.1-install-info-use-create-tmp-then-rename-pattern.patch</Patch> -->
@@ -64,7 +64,7 @@
             <Name>Pisi Linux Community</Name>
             <Email>admin@pisilinux.org</Email>
         </Update>
-		<Update release="15">
+        <Update release="15">
             <Date>2025-11-05</Date>
             <Version>7.2</Version>
             <Comment>Version bump.</Comment>

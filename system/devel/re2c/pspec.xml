@@ -20,14 +20,14 @@
     </Source>
     <Package>
         <Name>re2c</Name>
-		<RuntimeDependencies>
+        <RuntimeDependencies>
             <Dependency>libgcc</Dependency>
         </RuntimeDependencies>
         <Files>
             <Path fileType="executable">/usr/bin/</Path>
             <Path fileType="library">/usr/lib/</Path>
             <Path fileType="data">/usr/include/re2c/*</Path>
-			<Path fileType="data">/usr/share/re2c/*</Path>
+            <Path fileType="data">/usr/share/re2c/*</Path>
             <Path fileType="data">/usr/lib/pkgconfig/</Path>
             <Path fileType="doc">/usr/share/man/*</Path>
         </Files>

@@ -685,7 +685,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="75">
+        <Update release="75">
             <Date>2021-06-02</Date>
             <Version>6.1.22</Version>
             <Comment>Rebuild</Comment>
@@ -888,7 +888,7 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="47">
+        <Update release="47">
             <Date>2019-12-27</Date>
             <Version>6.1.0</Version>
             <Comment>Version bump.</Comment>

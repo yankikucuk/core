@@ -41,7 +41,7 @@
             <!-- Fix paths in 64bit -->
             <Patch level="1">pisilinux/64.patch</Patch>
             <Patch level="1">pisilinux/gcc_47_based-record_gcc_options.patch</Patch>
-			
+            
             <!-- Arch Linux patches -->
 <!--             <Patch level="1">archlinux/fs64270.patch</Patch> -->
 <!--             <Patch level="1">archlinux/ipa-fix-bit-CPP-when-combined-with-IPA-bit-CP.patch </Patch> -->

@@ -185,21 +185,21 @@
             <Name>Mustafa Cinasal</Name>
             <Email>muscnsl@gmail.com</Email>
         </Update>
-		<Update release="10">
+        <Update release="10">
             <Date>2021-03-01</Date>
             <Version>5.1.4</Version>
             <Comment>Version bump.</Comment>
             <Name>Idris Kalp</Name>
             <Email>idriskalp@gmail.com</Email>
         </Update>
-		<Update release="9">
+        <Update release="9">
             <Date>2020-12-09</Date>
             <Version>5.0.18</Version>
             <Comment>Version bump.</Comment>
             <Name>Idris Kalp</Name>
             <Email>idriskalp@gmail.com</Email>
         </Update>
-		<Update release="8">
+        <Update release="8">
             <Date>2019-12-11</Date>
             <Version>5.0.11</Version>
             <Comment>Version bump.</Comment>

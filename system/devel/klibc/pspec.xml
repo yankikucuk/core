@@ -20,9 +20,9 @@
             <!--Kernel güncellemesi sonrasında klibc rei edilmeli-->
             <Dependency>kernel-module-headers</Dependency>
         </BuildDependencies>
-		<Patches>
+        <Patches>
 <!-- 			<Patch level="1">fix_missing_include_in_sys_mman_h.patch</Patch> -->
-		</Patches>
+        </Patches>
     </Source>
 
     <Package>
