@@ -82,8 +82,13 @@ def install():
     shelltools.cd("../build-py3")
     autotools.rawInstall("DESTDIR=%s" % get.installDIR())
 
-    if get.buildTYPE() == "emul32" or "i686":
-        # 2.15 builds its documentation with doxygen and installs no gtk-doc pages
+    # the 32-bit build installs libraries only; documentation comes from the
+    # main build. (The condition used to read '== "emul32" or "i686"', which is
+    # always true, so the documents below were never installed.)
+    if get.buildTYPE() == "emul32":
         return
 
-    pisitools.dodoc("AUTHORS", "ChangeLog", "NEWS", "README", "TODO")
+    # 2.15 ships NEWS, README.md and Copyright (AUTHORS, ChangeLog and TODO are
+    # gone); they are in the source root, one level above the build directory
+    shelltools.cd("..")
+    pisitools.dodoc("NEWS", "README.md", "Copyright")
