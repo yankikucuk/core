@@ -12,7 +12,7 @@
         <IsA>library</IsA>
         <Summary>The Nettle package contains the low-level cryptographic library</Summary>
         <Description>The Nettle package contains the low-level cryptographic library that is designed to fit easily in many contexts.</Description>
-        <Archive sha1sum="7facbe118b985faab180cdcac13bebd16cc633b4" type="targz">ftp://ftp.gnu.org/gnu/nettle/nettle-3.10.2.tar.gz</Archive>
+        <Archive sha1sum="8a2f1b1d3c2e4c108b40dbc051a545550c1a6a4c" type="targz">https://ftp.gnu.org/gnu/nettle/nettle-4.0.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>gmp-devel</Dependency>
         </BuildDependencies>
@@ -65,6 +65,13 @@
     </Package>
 
     <History>
+        <Update release="12">
+            <Date>2026-09-24</Date>
+            <Version>4.0</Version>
+            <Comment>Version bump to 4.0 (new library ABI; libarchive rebuilt).</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="11">
             <Date>2026-07-04</Date>
             <Version>3.10.2</Version>
