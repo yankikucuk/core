@@ -83,7 +83,7 @@ def install():
     autotools.rawInstall("DESTDIR=%s" % get.installDIR())
 
     if get.buildTYPE() == "emul32" or "i686":
-        pisitools.removeDir("/usr/share/gtk-doc")
+        # 2.15 builds its documentation with doxygen and installs no gtk-doc pages
         return
 
     pisitools.dodoc("AUTHORS", "ChangeLog", "NEWS", "README", "TODO")
