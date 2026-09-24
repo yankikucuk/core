@@ -10,7 +10,10 @@ from pisi.actionsapi import shelltools
 from pisi.actionsapi import get
 
 
-flags = "%s -fPIC" % get.CFLAGS() if get.ARCH() == "x86_64" else get.CFLAGS()
+# 64-bit targets need position-independent code for the shared library.
+# yasm 1.3 names enum constants false/true, which are keywords in C23 (the
+# default of GCC 15 and later), so the sources are compiled as C17.
+flags = "%s -std=gnu17%s" % (get.CFLAGS(), "" if get.isI686() else " -fPIC")
 
 def setup():
     shelltools.export("CFLAGS", flags)
