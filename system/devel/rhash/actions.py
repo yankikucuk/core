@@ -18,9 +18,9 @@ def setup():
                                    --enable-gettext \
                                    --disable-openssl-runtime \
                                    --enable-openssl")
-	
+    
 def check():
-	autotools.make("test test-lib")
+    autotools.make("test test-lib")
     
 def install():
     autotools.make()

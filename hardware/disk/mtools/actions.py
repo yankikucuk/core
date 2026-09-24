@@ -16,7 +16,7 @@ def setup():
     shelltools.export("INSTALL_PROGRAM", "install")
     autotools.autoreconf("-fi")
     autotools.configure("--prefix=/usr \
-			             --sysconfdir=/etc/mtools \
+                                     --sysconfdir=/etc/mtools \
                          --includedir=/usr/src/linux/include")
 
 def build():

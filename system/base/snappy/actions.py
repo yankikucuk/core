@@ -22,7 +22,7 @@ def setup():
     cmaketools.configure("-DBUILD_SHARED_LIBS=ON \
                           -DSNAPPY_BUILD_TESTS=OFF \
                           -DSNAPPY_BUILD_BENCHMARKS=OFF \
-		                  -DCMAKE_INSTALL_LIBDIR=lib")
+                                  -DCMAKE_INSTALL_LIBDIR=lib")
                           
                     
 
