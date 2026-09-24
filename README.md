@@ -19,3 +19,7 @@ Paketleme Kuralları;
 Pisi GNU/Linux projesinin geliştirilmesine yardım etmek istiyorsanız;
 * Öncelikle kendi github hesabınıza projeyi fork'layıp
 * Yaptığınız değişiklikleri Pull Request ile gönderebilirsiniz. 
+
+## Lisans
+
+Bu depodaki tarifler (`pspec.xml`, `actions.py`, yamalar ve yardımcı betikler) GNU Genel Kamu Lisansı sürüm 2 veya sonrası (GPL-2.0-or-later) ile dağıtılır; metin `LICENSE` dosyasındadır. Tariflerin indirdiği kaynak arşivleri kendi lisanslarına tabidir; her paketin lisansı `pspec.xml` içindeki `<License>` alanında yazılıdır.
