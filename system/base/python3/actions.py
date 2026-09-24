@@ -25,8 +25,9 @@ def setup():
     
     #shelltools.export("CFLAGS", "-I%s/temp/include -O3" %get.workDIR())
     #shelltools.export("LDFLAGS", "-L%s/temp/lib -lbz2 -lpthread -ldl" %get.workDIR())
-    # fix unused direct dependency analysis
-    autotools.rawConfigure("LDSHARED='x86_64-pc-linux-gnu-gcc -Wl,-O1,--as-needed -shared -lpthread'\
+    # fix unused direct dependency analysis; the host triplet comes from
+    # pisi.conf so the same line works on every architecture
+    autotools.rawConfigure("LDSHARED='%s-gcc -Wl,-O1,--as-needed -shared -lpthread'\
                             --prefix=/usr \
                             --enable-shared \
                             --with-computed-gotos \
@@ -36,7 +37,7 @@ def setup():
                             --with-system-ffi \
                             --enable-loadable-sqlite-extensions \
                             --with-tzpath=/usr/share/zoneinfo \
-                            --without-ensurepip")
+                            --without-ensurepip" % get.HOST())
                             # --with-system-libmpdec \
 
 def build():

@@ -14,7 +14,7 @@ def setup():
                          --disable-dependency-tracking \
                          --enable-fast-install \
                          --enable-debugalloc \
-                         %s" % ("--enable-frame-pointers" if get.ARCH() == "x86_64" else ""))
+                         %s" % ("--enable-frame-pointers" if get.isX86_64() else ""))
 
     # Disable rpath
     pisitools.dosed("libtool", "^hardcode_libdir_flag_spec=.*", "hardcode_libdir_flag_spec=\"\"")

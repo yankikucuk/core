@@ -18,7 +18,7 @@ def setup():
                        --prefix=/usr \
                        --disable-debug \
                        %s \
-                       --enable-optimize="%s -fno-strict-aliasing"' % ("--enable-64bit" if get.ARCH() == "x86_64" else "", get.CFLAGS()))
+                       --enable-optimize="%s -fno-strict-aliasing"' % ("--enable-64bit" if not get.isI686() else "", get.CFLAGS()))
 
 def build():
     autotools.make()

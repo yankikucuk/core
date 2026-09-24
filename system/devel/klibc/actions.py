@@ -15,7 +15,10 @@ import os
 WorkDir = "klibc-%s" % get.srcVERSION()
 NoStrip = "/"
 KDIR = kerneltools.getKernelVersion()
-klibcarch = "x86_64" if get.ARCH() == "x86_64" else "i386"
+# klibc names its architectures like the kernel: x86_64, i386, arm64;
+# KLIBCASMARCH is the kernel's arch/ directory (x86 for both x86 flavours)
+klibcarch = get.kernelARCH()
+klibcasmarch = "x86" if get.isX86() else get.kernelARCH()
 
 docs = {"usr/klibc/arch/README.klibc.arch": "README.arch",
         "usr/dash/README.dash": "README.dash",
@@ -72,11 +75,11 @@ def build():
                     EXTRA_KLIBCLDFLAGS="-z,noexecstack" \
                     HOSTCC="%s" CC="%s" \
                     KLIBCARCH=%s \
-                    KLIBCASMARCH=x86 \
+                    KLIBCASMARCH=%s \
                     libdir=/usr/lib \
                     SHLIBDIR=/lib \
                     mandir=/usr/share/man \
-                    INSTALLDIR=/usr/lib/klibc' % (get.CC(), get.CC(), klibcarch))
+                    INSTALLDIR=/usr/lib/klibc' % (get.CC(), get.CC(), klibcarch, klibcasmarch))
 
 def install():
     shelltools.export("ARCH", "")
@@ -84,14 +87,14 @@ def install():
                           EXTRA_KLIBCLDFLAGS="-z,noexecstack" \
                           HOSTCC="%s" CC="%s" \
                           KLIBCARCH=%s \
-                          KLIBCASMARCH=x86 \
+                          KLIBCASMARCH=%s \
                           libdir=/usr/lib \
                           SHLIBDIR=/lib \
                           mandir=/usr/share/man \
                           INSTALLROOT="%s" \
-                          INSTALLDIR=/usr/lib/klibc' % (get.CC(), get.CC(), klibcarch, get.installDIR()))
+                          INSTALLDIR=/usr/lib/klibc' % (get.CC(), get.CC(), klibcarch, klibcasmarch, get.installDIR()))
 
-    asmSrcDir = "linux/arch/x86/include/asm"
+    asmSrcDir = "linux/arch/%s/include/asm" % klibcasmarch
     asmTargetDir = "/usr/lib/klibc/include/asm"
 
     # FIXME: we probably don't need old kernel workarounds anymore

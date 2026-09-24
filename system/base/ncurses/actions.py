@@ -74,7 +74,8 @@ def build():
     global CONFIGPARAMS
     shelltools.cd(NCURSESW)
     autotools.make()
-    if not get.buildTYPE() == "_emul32" and get.ARCH() == "x86_64": CONFIGPARAMS += " --with-chtype=long"
+    # 64-bit builds use a long chtype (same ABI choice on x86_64 and aarch64)
+    if not get.buildTYPE() == "_emul32" and not get.isI686(): CONFIGPARAMS += " --with-chtype=long"
     shelltools.cd("../%s" % NCURSES)
     shelltools.system("%s/configure %s" % (WORKDIR, CONFIGPARAMS))
     autotools.make()

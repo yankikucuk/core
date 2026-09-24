@@ -41,8 +41,8 @@ def install():
     chmod("/var/lock", 0775)
     chmod("/usr/share/baselayout/shadow", 0600)
 
-    if get.ARCH() == "x86_64":
-        # Directories for 32bit libraries
+    if get.multilibDIR():
+        # Directories for 32bit libraries (x86_64 multilib)
         pisitools.dodir("/lib32")
         pisitools.dodir("/usr/lib32")
 

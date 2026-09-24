@@ -9,13 +9,16 @@ from pisi.actionsapi import pisitools
 from pisi.actionsapi import shelltools
 from pisi.actionsapi import get
 
-cpupower_arch = get.ARCH().replace("i686", "i386")
+# directory name of the x86 debug tools under tools/power/cpupower/debug
+cpupower_arch = get.kernelARCH()
 
 def build():
     # Build cpupowertools
     shelltools.cd("tools/power/cpupower")
     autotools.make("CPUFREQ_BENCH=false")
-    autotools.make("-C debug/%s centrino-decode powernow-k8-decode" % cpupower_arch)
+    # centrino-decode and powernow-k8-decode read Intel/AMD MSRs: x86 only
+    if get.isX86():
+        autotools.make("-C debug/%s centrino-decode powernow-k8-decode" % cpupower_arch)
 
 def install():
     # Install cpupowertools stuff
