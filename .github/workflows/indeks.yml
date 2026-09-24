@@ -1,0 +1,73 @@
+name: Kaynak İndeksini Yayınla
+
+# master'a giren her tarif değişikliğinden sonra pisi-index.xml.xz yeniden
+# üretilir ve depoya commit edilmek yerine sabit "index" etiketli GitHub
+# sürümüne dosya olarak yüklenir. Chroot imajı ve derleme çiftliği indeksi
+# şu adresten okur:
+#   https://github.com/pisilinux/core/releases/download/index/pisi-index.xml.xz
+# Depoya commit edilen indeks elle üretildiği için tariflerin gerisinde
+# kalıyordu (2026-04'te üretilen indeks 60 paketi eksik gösteriyordu).
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**/pspec.xml'
+      - '**/component.xml'
+      - 'components.xml'
+      - 'distribution.xml'
+      - 'groups.xml'
+      - '.github/workflows/indeks.yml'
+  workflow_dispatch:
+
+# GitHub'ın istediği Node 24 zorlamasını çevre değişkeni olarak ekliyoruz
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+# Aynı anda iki üretim çalışmasın; sondaki kazansın.
+concurrency:
+  group: kaynak-indeksi
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  indeks:
+    name: İndeksi üret ve yayınla
+    runs-on: ubuntu-latest
+    # İndeks, çiftliğin kullandığı PiSi ile üretilir; imaj gerçek pisi ve Python 2.7 içerir.
+    container:
+      image: pisilinux/chroot:latest
+    steps:
+      - name: Kodu Çek
+        uses: actions/checkout@v4
+
+      - name: İndeksi üret
+        run: |
+          # --skip-signing: çiftlik imzasız indeks kullanır (pisi ur "No signature found" uyarısıyla geçer).
+          # Kaynak indeksi ikili paket içermez; yalnızca tarifler taranır.
+          pisi index --skip-signing . -o pisi-index.xml
+          xz -9 -k -f pisi-index.xml
+          sha1sum pisi-index.xml | cut -d ' ' -f 1 > pisi-index.xml.sha1sum
+          sha1sum pisi-index.xml.xz | cut -d ' ' -f 1 > pisi-index.xml.xz.sha1sum
+          python - <<'PY'
+          import xml.etree.ElementTree as ElementTree
+          import os
+          index = ElementTree.parse("pisi-index.xml").getroot()
+          indexed = len(index.findall("SpecFile"))
+          on_disk = sum(1 for _, _, files in os.walk(".") if "pspec.xml" in files)
+          print("indexed %d of %d recipes" % (indexed, on_disk))
+          if indexed != on_disk:
+              raise SystemExit("index is incomplete")
+          PY
+
+      - name: Sürüm dosyalarını yükle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # "index" etiketi bir kez oluşturulur; sonraki çalışmalar dosyaların üstüne yazar.
+          gh release view index >/dev/null 2>&1 \
+            || gh release create index --title "Kaynak indeksi" --notes "pisi-index.xml.xz her master push'unda yeniden üretilir; sürüm numarası taşımaz." --latest=false
+          gh release upload index --clobber pisi-index.xml.xz pisi-index.xml.xz.sha1sum pisi-index.xml pisi-index.xml.sha1sum
