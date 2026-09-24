@@ -13,11 +13,16 @@ import os
 
 # WorkDir = "glibc-%s" %get.srcVERSION()
 
-arch = "x86-64" if get.ARCH() == "x86_64" and not get.buildTYPE() == "emul32" else "i686"
+# -march for this build: the 32-bit multilib pass on x86_64 targets i686
+if get.buildTYPE() == "emul32" or get.isI686():
+    arch = "i686"
+elif get.isAARCH64():
+    arch = "armv8-a"
+else:
+    arch = "x86-64"
 defaultflags = "-O3 -g -fasynchronous-unwind-tables -mtune=generic -march=%s" % arch
 if get.buildTYPE() == "emul32": defaultflags += " -m32"
 # this is getting ridiculous, also gdb3 breaks resulting binary
-#sysflags = "-mtune=generic -march=x86-64" if get.ARCH() == "x86_64" else "-mtune=generic -march=i686"
 
 ### helper functions ###
 def removePisiLinuxSection(_dir):

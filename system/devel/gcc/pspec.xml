@@ -40,6 +40,8 @@
             <!-- Pisilinux Patches -->
             <!-- Fix paths in 64bit -->
             <Patch level="1">pisilinux/64.patch</Patch>
+            <!-- the aarch64 counterpart of 64.patch: no lib64 directory -->
+            <Patch level="1">pisilinux/aarch64-lib.patch</Patch>
             <Patch level="1">pisilinux/gcc_47_based-record_gcc_options.patch</Patch>
             
             <!-- Arch Linux patches -->

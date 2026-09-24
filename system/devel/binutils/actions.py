@@ -11,7 +11,9 @@ from pisi.actionsapi import get
 
 # linker = "gold"
 linker = "ld"
-multilib = "--enable-multilib" if get.ARCH() == "x86_64" else ""
+multilib = "--enable-multilib" if get.isX86_64() else ""
+# x86_64-pep lets ld and objcopy handle EFI (PE32+) images on x86_64
+extra_targets = "--enable-targets=x86_64-pep" if get.isX86_64() else ""
 
 # WorkDir = "binutils-2.20.51"
 
@@ -27,14 +29,14 @@ def setup():
                          --enable-ld=default \
                          --enable-gold \
                          --enable-plugins \
-                         --enable-targets=x86_64-pep \
+                         %s \
                          --with-pkgversion="Pisi Linux" \
                          --with-bugurl=https://bugs.pisilinux.org/ \
                          --without-stage1-ldflags \
                          %s \
                          --with-pic \
                          --disable-nls \
-                         --disable-werror' % (get.HOST(), multilib))
+                         --disable-werror' % (get.HOST(), extra_targets, multilib))
                          #--enable-targets="i386-linux" \
 
 def build():

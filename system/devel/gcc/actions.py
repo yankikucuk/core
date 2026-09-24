@@ -19,11 +19,18 @@ if snapshot:
 else:
     verMajor = get.srcVERSION()
 
-arch = get.ARCH().replace("x86_64", "x86-64")
 
-#opt_unwind = "--with-system-libunwind" if get.ARCH() == "x86_64" else "--without-system-libunwind"
-opt_arch = "--with-arch_32=i686" if get.ARCH() == "x86_64" else "--with-arch=i686"
-opt_multilib = "--enable-multilib" if get.ARCH() == "x86_64" else ""
+# x86_64 builds a 32-bit multilib (i686); i686 targets i686; aarch64 uses
+# gcc's armv8-a default and has no multilib
+if get.isX86_64():
+    opt_arch = "--with-arch_32=i686"
+    opt_multilib = "--enable-multilib"
+elif get.isI686():
+    opt_arch = "--with-arch=i686"
+    opt_multilib = ""
+else:
+    opt_arch = ""
+    opt_multilib = "--disable-multilib"
 
 # WARNING: even -fomit-frame-pointer may break the build, stack protector, fortify source etc. are off limits
 cflags = "-O2 -g"
@@ -132,11 +139,11 @@ def install():
     # /lib/cpp symlink for legacy X11 stuff
     pisitools.dosym("/usr/bin/cpp", "/lib/cpp")
     
-    pisitools.dosym("/usr/bin/x86_64-pc-linux-gnu-gcc-ar", "/usr/bin/x86_64-pc-linux-gnu-ar")
+    pisitools.dosym("/usr/bin/%s-gcc-ar" % get.HOST(), "/usr/bin/%s-ar" % get.HOST())
 
     # Remove our options section from crt stuff
     removePisiLinuxSection("%s/usr/lib/" % get.installDIR())
-    if get.ARCH() == "x86_64":
+    if get.multilibDIR():
         removePisiLinuxSection("%s/usr/lib32/" % get.installDIR())
 
 
@@ -148,6 +155,6 @@ def install():
     for i in gdbpy_files:
         pisitools.domove("/usr/lib/%s" % shelltools.baseName(i), gdbpy_dir)
 
-    if arch == "x86-64":
+    if get.multilibDIR():
         pisitools.remove("/usr/lib32/libstdc++*gdb.py*")
 
