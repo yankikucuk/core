@@ -12,6 +12,27 @@ from pisi.actionsapi import shelltools
 #WorkDir="grub-%s" % (get.srcVERSION().replace("_", "~"))
 
 
+
+# GRUB platforms per architecture. The main source tree is configured for
+# MAIN_PLATFORM/MAIN_TARGET; when EFI_TARGET is set, a copy of the tree is
+# built for EFI as well and only its modules are installed.
+#   x86_64:  BIOS (pc, i386 target) + UEFI (x86_64-efi)
+#   aarch64: UEFI only (arm64-efi), the one firmware interface arm64 has
+if get.isAARCH64():
+    MAIN_PLATFORM, MAIN_TARGET, EFI_TARGET = "efi", "arm64", None
+else:
+    MAIN_PLATFORM, MAIN_TARGET, EFI_TARGET = "pc", "i386", "x86_64"
+
+def configure_platform(platform, target):
+    autotools.configure("--disable-werror \
+                         --with-bootdir='/boot' \
+                         --with-grubdir=grub2 \
+                         --program-transform-name='s,grub,grub2,'\
+                         --program-prefix= \
+                         --with-platform=%s \
+                         --target='%s' \
+                         --htmldir='/usr/share/doc/grub2/html' " % (platform, target))
+
 def setup():
     shelltools.export("PYTHON", "/usr/bin/python3")
     shelltools.copy("../unifont*.bdf", "./unifont.bdf")
@@ -25,32 +46,16 @@ def setup():
     #shelltools.system("./bootstrap")
     #shelltools.system('echo "Make translations reproducible..."')
     #shelltools.system("sed -i '1i /^PO-Revision-Date:/ d' po/*.sed")
-    shelltools.copytree("../grub-%s" % (get.srcVERSION().replace("_", "~")), "../grub-%s-efi" % get.srcVERSION())
+    if EFI_TARGET:
+        shelltools.copytree("../grub-%s" % (get.srcVERSION().replace("_", "~")), "../grub-%s-efi" % get.srcVERSION())
 
     autotools.autoreconf("-fi")
+    configure_platform(MAIN_PLATFORM, MAIN_TARGET)
 
-    autotools.configure("--disable-werror \
-                         --with-bootdir='/boot' \
-                         --with-grubdir=grub2 \
-                         --program-transform-name='s,grub,grub2,'\
-                         --program-prefix= \
-                         --with-platform=pc \
-                         --target='i386' \
-                         --htmldir='/usr/share/doc/grub2/html' ")
-
-
-    shelltools.cd("../grub-%s-efi" % get.srcVERSION())
-    #shelltools.system("./autogen.sh")
-
-    autotools.autoreconf("-fi")
-    autotools.configure("--disable-werror \
-                         --with-bootdir='/boot' \
-                         --with-grubdir=grub2 \
-                         --program-transform-name='s,grub,grub2,'\
-                         --program-prefix= \
-                         --with-platform=efi \
-                         --target=x86_64  \
-                         --htmldir='/usr/share/doc/grub2/html' ")
+    if EFI_TARGET:
+        shelltools.cd("../grub-%s-efi" % get.srcVERSION())
+        autotools.autoreconf("-fi")
+        configure_platform("efi", EFI_TARGET)
 
 
     shelltools.cd("..")
@@ -61,9 +66,10 @@ def build():
     #autotools.make("dist")
     autotools.make()
 
-    shelltools.cd("../grub-%s-efi" % get.srcVERSION())
-    autotools.make()
-    shelltools.cd("..")
+    if EFI_TARGET:
+        shelltools.cd("../grub-%s-efi" % get.srcVERSION())
+        autotools.make()
+        shelltools.cd("..")
 
 def install():
     # Install unicode.pf2 using downloaded font source.
@@ -95,13 +101,12 @@ def install():
 
     pisitools.dodoc("ABOUT-NLS", "AUTHORS", "BUGS", "COPYING", "TODO", "README")
     
-    shelltools.cd("../grub-%s-efi" % get.srcVERSION())
-    
-    autotools.rawInstall("DESTDIR=%s/efi" % get.installDIR())
-    
-    
-    shelltools.copytree("/%s/efi/usr/lib/grub/x86_64-efi" % get.installDIR(), "%s/usr/lib/grub/x86_64-efi" % get.installDIR())
-    pisitools.removeDir("/efi")
+    if EFI_TARGET:
+        # the second tree only contributes its EFI modules
+        shelltools.cd("../grub-%s-efi" % get.srcVERSION())
+        autotools.rawInstall("DESTDIR=%s/efi" % get.installDIR())
+        shelltools.copytree("/%s/efi/usr/lib/grub/%s-efi" % (get.installDIR(), EFI_TARGET), "%s/usr/lib/grub/%s-efi" % (get.installDIR(), EFI_TARGET))
+        pisitools.removeDir("/efi")
 
 
 
