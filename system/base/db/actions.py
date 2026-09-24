@@ -12,6 +12,15 @@ from pisi.actionsapi import get
 WorkDir = "db-%s/build_unix" % get.srcVERSION()
 
 def setup():
+    # atomic.h declares its own __atomic_compare_exchange, which collides
+    # with the GCC built-in of the same name; every distribution renames
+    # it. Done with dosed because the build runs from build_unix and PiSi
+    # applies patches relative to that directory.
+    pisitools.dosed("../src/dbinc/atomic.h", "__atomic_compare_exchange\\(", "__atomic_compare_exchange_db(")
+    # 5.3 predates C23: its headers declare functions with empty parameter
+    # lists, which GCC 15's default dialect reads as (void); build as C17.
+    pisitools.cflags.add("-std=gnu17")
+
     pisitools.ldflags.add("-Wl,--default-symver -lpthread")
     shelltools.system("../dist/configure \
                        --prefix=/usr \
@@ -21,6 +30,7 @@ def setup():
                        --sysconfdir=/etc \
                        --localstatedir=/var/lib \
                        --libdir=/usr/lib \
+                       --with-mutex=POSIX/pthreads \
                        --enable-compat185 \
                        --with-uniquename \
                        --enable-cxx \
