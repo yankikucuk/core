@@ -15,6 +15,7 @@
         <Archive sha1sum="e513f45ebe2623afd6c98a038af30f4d9690a401" type="tarxz">https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.18.tar.xz</Archive>
         <AdditionalFiles>
             <AdditionalFile target="configs/kernel-x86_64-config">configs/kernel-x86_64-config</AdditionalFile>
+            <AdditionalFile target="configs/kernel-aarch64-config">configs/kernel-aarch64-config</AdditionalFile>
             <AdditionalFile permission="0755" target="generate-module-list">scripts/generate-module-list</AdditionalFile>
         </AdditionalFiles>
         <BuildDependencies>
