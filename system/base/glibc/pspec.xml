@@ -13,7 +13,7 @@
         <IsA>library</IsA>
         <Summary>GNU libc6 (also called glibc2) C library</Summary>
         <Description>The GNU C library is used as the C library in the GNU system and most systems with the Linux kernel. It defines the system calls and other basic C programming language facilities.</Description>
-        <Archive sha1sum="b5c170f2941cd39292ee0b986921334c004dd562" type="tarxz">https://ftp.gnu.org/gnu/libc/glibc-2.42.tar.xz</Archive>
+        <Archive sha1sum="9e89c156ef073bf5923a8f46c0ee3e619744f42c" type="tarxz">https://ftp.gnu.org/gnu/libc/glibc-2.44.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>kernel-headers</Dependency>
             <Dependency>gettext</Dependency>
@@ -2089,6 +2089,13 @@
     </Package>
 
     <History>
+        <Update release="19">
+            <Date>2026-09-24</Date>
+            <Version>2.44</Version>
+            <Comment>Version bump to 2.44 (/etc/tunables.conf, more correctly rounded math, RISC-V vector and LoongArch32 support). COPYING is gone upstream; COPYING.LIB is installed instead.</Comment>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="18">
             <Date>2026-06-03</Date>
             <Version>2.42</Version>

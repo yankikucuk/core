@@ -150,5 +150,6 @@ def install():
             #pisitools.remove("/usr/sbin/%s" % i)
 
     shelltools.cd("..")
-    pisitools.dodoc("NEWS", "README*", "LICENSES", "COPYING")
+    # 2.44 ships COPYING.LIB (LGPL) and LICENSES; the GPL COPYING file is gone.
+    pisitools.dodoc("NEWS", "README*", "LICENSES", "COPYING.LIB")
 
