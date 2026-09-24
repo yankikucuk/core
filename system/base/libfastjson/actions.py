@@ -11,8 +11,8 @@ from pisi.actionsapi import shelltools
 from pisi.actionsapi import get
 
 def setup():
-    shelltools.system("sh autogen.sh")
-    
+    # the release tarball is a "make dist" archive with configure included,
+    # unlike the tag archive the recipe used before
     autotools.configure("--disable-static")
 
 def build():
