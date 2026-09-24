@@ -1,0 +1,326 @@
+From 0c2289f78a4e894306dbf3f625b144fc7f4f1fb4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Yank=C4=B1=20K=C3=BC=C3=A7=C3=BCk?=
+ <kendinikertenkelebek@me.com>
+Date: Thu, 24 Sep 2026 18:59:36 +0300
+Subject: [PATCH 4/6] feat(build): skip architecture-bound build types, compare
+ architectures by meaning
+
+- Builder.get_build_types() drops packages whose build type is bound to
+  another architecture: a <Package buildType="emul32"> (32-bit multilib)
+  is not built on aarch64, with a message saying so. Recipe-specific build
+  types such as zlib's minizip are still built everywhere, and
+  ignored_build_types in pisi.conf works as before.
+- <ExcludeArch> and the install-time architecture check compare through
+  the table, so aliases (arm64, amd64) count.
+- pisi emerge filters out sources excluded for the current architecture
+  before planning, instead of stopping at the first excluded package of a
+  component.
+
+Tests (tests/archinfotest.py, 17 tests) cover the table, aliases,
+exclusion, configuration defaults and the build-type selection with a
+builder test double. They pass with Python 2.7 in pisilinux/chroot
+(x86_64, emulated) and natively on arm64 (python:2.7 image, C extensions
+stubbed). The other test modules give the same results as before the
+change (utiltest, relationtest, archivetests and srcarchivetest already
+failed on master).
+
+Integration, with this PiSi installed in pisilinux/chroot:
+- zlib as x86_64 produces the same five packages as stock PiSi (zlib,
+  zlib-devel, zlib-32bit, minizip, minizip-devel);
+- zlib with architecture = aarch64 skips zlib-32bit and produces
+  aarch64-named packages;
+- which with <ExcludeArch>arm64</ExcludeArch> refuses to build as aarch64;
+- the emerge filter keeps which on x86_64 and drops it on aarch64.
+---
+ pisi/operations/build.py   |  14 ++-
+ pisi/operations/emerge.py  |  22 +++++
+ pisi/operations/install.py |   4 +-
+ tests/archinfotest.py      | 172 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 210 insertions(+), 2 deletions(-)
+ create mode 100644 tests/archinfotest.py
+
+diff --git a/pisi/operations/build.py b/pisi/operations/build.py
+index 3892734..292bf71 100644
+--- a/pisi/operations/build.py
++++ b/pisi/operations/build.py
+@@ -29,6 +29,7 @@ import pisi.specfile
+ import pisi.util as util
+ import pisi.file
+ import pisi.context as ctx
++import pisi.archinfo
+ import pisi.dependency as dependency
+ import pisi.api
+ import pisi.sourcearchive
+@@ -318,7 +319,8 @@ class Builder:
+         """Build the package in one shot."""
+ 
+         architecture = ctx.config.values.general.architecture
+-        if architecture in self.spec.source.excludeArch:
++        # Aliases count too: <ExcludeArch>arm64</ExcludeArch> excludes aarch64.
++        if pisi.archinfo.excluded(architecture, self.spec.source.excludeArch):
+             raise ExcludedArchitectureException(
+                     _("pspec.xml avoids this package from building for '%s'")
+                     % architecture)
+@@ -358,6 +360,7 @@ class Builder:
+     def get_build_types(self):
+         ignored_build_types = \
+                 ctx.config.values.build.ignored_build_types.split(",")
++        arch = pisi.archinfo.get(ctx.config.values.general.architecture)
+         build_types = [""]
+         packages = []
+ 
+@@ -366,6 +369,15 @@ class Builder:
+                 if package.buildType in ignored_build_types:
+                     continue
+ 
++                # e.g. emul32 (32-bit multilib) only exists on x86_64; on
++                # other architectures those packages are simply not built,
++                # so recipes need no per-architecture conditionals for it.
++                if not arch.supports_build_type(package.buildType):
++                    ctx.ui.info(_("Skipping %s: build type '%s' is not "
++                                  "supported on %s") % (package.name,
++                                  package.buildType, arch.name))
++                    continue
++
+                 if package.buildType not in build_types:
+                     build_types.append(package.buildType)
+ 
+diff --git a/pisi/operations/emerge.py b/pisi/operations/emerge.py
+index 3701dd4..e560a4e 100644
+--- a/pisi/operations/emerge.py
++++ b/pisi/operations/emerge.py
+@@ -23,12 +23,34 @@ import pisi.util as util
+ import pisi.atomicoperations as atomicoperations
+ import pisi.ui as ui
+ import pisi.db
++import pisi.db.sourcedb
++import pisi.archinfo
++
++def filter_excluded_architecture(A):
++    """Drop source packages whose <ExcludeArch> lists this architecture.
++
++    A component emerge (e.g. "kernel.drivers") would otherwise stop at the
++    first x86-only module on aarch64; excluded sources are reported and
++    skipped instead, the same way the farm skips them when building.
++    """
++    architecture = ctx.config.values.general.architecture
++    sourcedb = pisi.db.sourcedb.SourceDB()
++    kept = set()
++    for name in A:
++        if sourcedb.has_spec(name):
++            spec = sourcedb.get_spec(name)
++            if pisi.archinfo.excluded(architecture, spec.source.excludeArch):
++                ctx.ui.info(_("Skipping %s: excluded for %s") % (name, architecture))
++                continue
++        kept.add(name)
++    return kept
+ 
+ def emerge(A):
+ 
+     # A was a list, remove duplicates and expand components
+     A = [str(x) for x in A]
+     A_0 = A = pisi.operations.helper.expand_src_components(set(A))
++    A_0 = A = filter_excluded_architecture(A)
+     ctx.ui.debug('A = %s' % str(A))
+ 
+     if len(A)==0:
+diff --git a/pisi/operations/install.py b/pisi/operations/install.py
+index 15abfc8..450c6aa 100644
+--- a/pisi/operations/install.py
++++ b/pisi/operations/install.py
+@@ -20,6 +20,7 @@ _ = __trans.ugettext
+ 
+ import pisi
+ import pisi.context as ctx
++import pisi.archinfo
+ import pisi.util as util
+ import pisi.atomicoperations as atomicoperations
+ import pisi.operations as operations
+@@ -212,7 +213,8 @@ def install_pkg_files(package_URIs, reinstall = False):
+                 raise Exception(_('Package %s is not compatible with your distribution release %s %s.') \
+                         % (x, ctx.config.values.general.distribution, \
+                         ctx.config.values.general.distribution_release))
+-            if pkg.architecture != ctx.config.values.general.architecture:
++            if not pisi.archinfo.same(pkg.architecture,
++                                      ctx.config.values.general.architecture):
+                 raise Exception(_('Package %s (%s) is not compatible with your %s architecture.') \
+                         % (x, pkg.architecture, ctx.config.values.general.architecture))
+ 
+diff --git a/tests/archinfotest.py b/tests/archinfotest.py
+new file mode 100644
+index 0000000..1de8932
+--- /dev/null
++++ b/tests/archinfotest.py
+@@ -0,0 +1,172 @@
++# -*- coding: utf-8 -*-
++#
++# Copyright (C) 2026, Pisi Linux Community
++#
++# This program is free software; you can redistribute it and/or modify it under
++# the terms of the GNU General Public License as published by the Free
++# Software Foundation; either version 2 of the License, or (at your option)
++# any later version.
++#
++# Please read the COPYING file.
++#
++
++"""Tests for the architecture table (pisi/archinfo.py)."""
++
++import os
++import unittest
++
++import pisi.archinfo as archinfo
++
++
++class ArchInfoTestCase(unittest.TestCase):
++
++    def testCanonicalNames(self):
++        for name in ("x86_64", "i686", "aarch64"):
++            self.assertEqual(archinfo.canonical(name), name)
++
++    def testAliases(self):
++        self.assertEqual(archinfo.canonical("amd64"), "x86_64")
++        self.assertEqual(archinfo.canonical("x86-64"), "x86_64")
++        self.assertEqual(archinfo.canonical("arm64"), "aarch64")
++        self.assertEqual(archinfo.canonical("i386"), "i686")
++
++    def testUnknownArchitectureIsAnError(self):
++        self.assertRaises(archinfo.Error, archinfo.canonical, "sparc64")
++
++    def testKernelValues(self):
++        self.assertEqual(archinfo.get("x86_64").kernel_arch, "x86_64")
++        self.assertEqual(archinfo.get("i686").kernel_arch, "i386")
++        self.assertEqual(archinfo.get("aarch64").kernel_arch, "arm64")
++        self.assertEqual(archinfo.get("x86_64").kernel_image, "arch/x86/boot/bzImage")
++        self.assertEqual(archinfo.get("arm64").kernel_image, "arch/arm64/boot/Image.gz")
++
++    def testHostTriplets(self):
++        self.assertEqual(archinfo.get("x86_64").host, "x86_64-pc-linux-gnu")
++        self.assertEqual(archinfo.get("aarch64").host, "aarch64-pc-linux-gnu")
++
++    def testFlagsDoNotLeakAcrossArchitectures(self):
++        self.assertTrue("-march=x86-64" in archinfo.get("x86_64").cflags)
++        self.assertTrue("-march=armv8-a" in archinfo.get("aarch64").cflags)
++        self.assertFalse("x86" in archinfo.get("aarch64").cflags)
++
++    def testEmul32OnlyOnX86_64(self):
++        self.assertTrue(archinfo.get("x86_64").supports_build_type("emul32"))
++        self.assertFalse(archinfo.get("aarch64").supports_build_type("emul32"))
++        self.assertFalse(archinfo.get("i686").supports_build_type("emul32"))
++        for name in archinfo.ARCHITECTURES:
++            self.assertTrue(archinfo.get(name).supports_build_type(""))
++
++    def testRecipeBuildTypesBuildEverywhere(self):
++        # zlib builds minizip as an extra pass; that is not architecture-bound
++        for name in archinfo.ARCHITECTURES:
++            self.assertTrue(archinfo.get(name).supports_build_type("minizip"))
++
++    def testMultilibDirectory(self):
++        self.assertEqual(archinfo.get("x86_64").multilib_dir, "lib32")
++        self.assertEqual(archinfo.get("aarch64").multilib_dir, None)
++
++    def testSame(self):
++        self.assertTrue(archinfo.same("arm64", "aarch64"))
++        self.assertTrue(archinfo.same("amd64", "x86_64"))
++        self.assertFalse(archinfo.same("aarch64", "x86_64"))
++
++    def testExcluded(self):
++        self.assertTrue(archinfo.excluded("aarch64", ["i686", "arm64"]))
++        self.assertTrue(archinfo.excluded("x86_64", [" amd64 "]))
++        self.assertFalse(archinfo.excluded("x86_64", ["aarch64"]))
++        self.assertFalse(archinfo.excluded("x86_64", []))
++
++    def testMachineIsKnown(self):
++        # whatever the test machine is, the result is a canonical name
++        self.assertTrue(archinfo.machine() in archinfo.ARCHITECTURES)
++
++    def testMachineMatchesUname(self):
++        uname = os.uname()[4]
++        try:
++            expected = archinfo.canonical(uname)
++        except archinfo.Error:
++            expected = "x86_64"
++        self.assertEqual(archinfo.machine(), expected)
++
++
++class ConfigDefaultsTestCase(unittest.TestCase):
++
++    def testDefaultsFollowTheMachine(self):
++        import pisi.configfile as configfile
++        machine = archinfo.get(archinfo.machine())
++        self.assertEqual(configfile.GeneralDefaults.architecture, machine.name)
++        self.assertEqual(configfile.BuildDefaults.host, machine.host)
++        self.assertEqual(configfile.BuildDefaults.cflags, machine.cflags)
++
++
++class _Package(object):
++    def __init__(self, name, build_type=None):
++        self.name = name
++        self.buildType = build_type
++
++
++class _Spec(object):
++    def __init__(self, packages):
++        self.packages = packages
++
++
++class _Values(object):
++    """Stands in for ctx.config.values with only what get_build_types reads."""
++    def __init__(self, architecture, ignored=""):
++        class General(object):
++            pass
++        class Build(object):
++            pass
++        self.general = General()
++        self.general.architecture = architecture
++        self.build = Build()
++        self.build.ignored_build_types = ignored
++
++
++class BuildTypesTestCase(unittest.TestCase):
++    """Builder.get_build_types skips build types the architecture lacks."""
++
++    def setUp(self):
++        import pisi.context as ctx
++        import pisi.ui
++        self.ctx = ctx
++        self.saved = ctx.config, ctx.ui
++        class Config(object):
++            pass
++        ctx.config = Config()
++        ctx.ui = pisi.ui.UI()
++
++    def tearDown(self):
++        self.ctx.config, self.ctx.ui = self.saved
++
++    def build_types(self, architecture, ignored=""):
++        import pisi.operations.build as build
++        self.ctx.config.values = _Values(architecture, ignored)
++        class Builder(build.Builder):
++            # skip the real constructor: it needs a pspec.xml on disk
++            def __init__(self):
++                pass
++        builder = Builder()
++        builder.spec = _Spec([_Package("zlib"), _Package("zlib-32bit", "emul32"),
++                              _Package("minizip", "minizip")])
++        types = builder.get_build_types()
++        return types, [p.name for p in builder.spec.packages]
++
++    def testEmul32BuiltOnX86_64(self):
++        types, packages = self.build_types("x86_64")
++        self.assertEqual(types, ["", "emul32", "minizip"])
++        self.assertEqual(packages, ["zlib", "zlib-32bit", "minizip"])
++
++    def testEmul32SkippedOnAarch64(self):
++        types, packages = self.build_types("aarch64")
++        self.assertEqual(types, ["", "minizip"])
++        self.assertEqual(packages, ["zlib", "minizip"])
++
++    def testIgnoredBuildTypesStillHonoured(self):
++        types, packages = self.build_types("x86_64", ignored="emul32")
++        self.assertEqual(types, ["", "minizip"])
++        self.assertEqual(packages, ["zlib", "minizip"])
++
++
++if __name__ == "__main__":
++    unittest.main()

@@ -1,0 +1,308 @@
+From 4e8a6998b9fdb063455cec9c57ec1bbc45175b46 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Yank=C4=B1=20K=C3=BC=C3=A7=C3=BCk?=
+ <kendinikertenkelebek@me.com>
+Date: Thu, 24 Sep 2026 19:05:05 +0300
+Subject: [PATCH 6/6] feat(specfile): accept sha256sum for source archives
+
+Source archives could only be verified with SHA-1 (sha1sum, mandatory),
+which is no longer collision resistant. Recipes can now give sha256sum,
+sha1sum or both; at least one is required and every hash that is given
+must match.
+
+- specfile.Archive: sha1sum and sha256sum are both optional attributes; a
+  decode hook rejects an archive with neither; hashes() returns the
+  (algorithm, digest) pairs to check, sha256 first.
+- sourcearchive.SourceArchive.hashes_match() checks all of them, both for
+  the cached archive and before unpacking.
+- util: hash_file(filename, algorithm) backs sha1_file(), the new
+  sha256_file() and check_file_hash(), which keeps sha1 as its default so
+  other callers are unchanged.
+- pisi-spec.dtd and pisi-spec.rng: sha1sum becomes optional and sha256sum
+  is added; the RelaxNG rule requires at least one of them. (The full
+  RelaxNG schema already rejected current recipes before this change, for
+  example on empty <Patches>; the Archive rule was checked on its own.)
+
+Existing recipes keep working unchanged; moving them to sha256sum is a
+separate, mechanical change in core and main.
+
+Tests: tests/archivehashtest.py (6 tests: sha1 only, sha256 only, both,
+neither rejected, file hashing, SourceArchive matching) passes with
+Python 2.7 in pisilinux/chroot; the other test modules give the same
+results as on master. Integration with this PiSi in the chroot: which
+builds with sha256sum only and with both hashes, a wrong sha256sum stops
+the build with "check_file_hash failed", and "pisi index" keeps the
+sha256sum attribute in the generated index.
+---
+ pisi-spec.dtd            |   4 +-
+ pisi-spec.rng            |  11 ++++-
+ pisi/sourcearchive.py    |  11 ++++-
+ pisi/specfile.py         |  22 ++++++++-
+ pisi/util.py             |  21 ++++++--
+ tests/archivehashtest.py | 102 +++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 160 insertions(+), 11 deletions(-)
+ create mode 100644 tests/archivehashtest.py
+
+diff --git a/pisi-spec.dtd b/pisi-spec.dtd
+index f5dbc92..fb0f0b2 100644
+--- a/pisi-spec.dtd
++++ b/pisi-spec.dtd
+@@ -47,7 +47,9 @@
+ <!ATTLIST Description xml:lang CDATA #IMPLIED>
+ 
+ <!ELEMENT Archive (#PCDATA)>
+-<!ATTLIST Archive sha1sum CDATA #REQUIRED>
++<!-- at least one of sha1sum and sha256sum is required; sha256sum is preferred -->
++<!ATTLIST Archive sha1sum CDATA #IMPLIED>
++<!ATTLIST Archive sha256sum CDATA #IMPLIED>
+ <!-- NOTE: we can limit possible types here to the ones that pisi know -->
+ <!ATTLIST Archive type CDATA #REQUIRED>
+ <!ATTLIST Archive target CDATA #IMPLIED>
+diff --git a/pisi-spec.rng b/pisi-spec.rng
+index bc20e94..39756f7 100644
+--- a/pisi-spec.rng
++++ b/pisi-spec.rng
+@@ -1321,7 +1321,16 @@
+     <!-- attlist.Archive -->
+     <define name="attlist.Archive" combine="interleave">
+         <group>
+-            <attribute name="sha1sum"/>
++            <!-- at least one hash; sha256sum is preferred, sha1sum is kept
++                 for existing recipes -->
++            <choice>
++                <attribute name="sha1sum"/>
++                <attribute name="sha256sum"/>
++                <group>
++                    <attribute name="sha1sum"/>
++                    <attribute name="sha256sum"/>
++                </group>
++            </choice>
+             <optional>
+                 <attribute name="type">
+                     <choice>
+diff --git a/pisi/sourcearchive.py b/pisi/sourcearchive.py
+index 6ca4889..7cf86b8 100644
+--- a/pisi/sourcearchive.py
++++ b/pisi/sourcearchive.py
+@@ -99,12 +99,19 @@ class SourceArchive:
+ 
+         raise pisi.fetcher.FetchError(_('Could not fetch source from %s mirrors.') % name);
+ 
++    def hashes_match(self):
++        """True when the archive matches every hash given in pspec.xml."""
++        for algorithm, digest in self.archive.hashes():
++            if not util.check_file_hash(self.archiveFile, digest, algorithm):
++                return False
++        return True
++
+     def is_cached(self, interactive=True):
+         if not os.access(self.archiveFile, os.R_OK):
+             return False
+ 
+         # check hash
+-        if util.check_file_hash(self.archiveFile, self.archive.sha1sum):
++        if self.hashes_match():
+             if interactive:
+                 ctx.ui.info(_('%s [cached]') % self.archive.name)
+             return True
+@@ -114,7 +121,7 @@ class SourceArchive:
+     def unpack(self, target_dir, clean_dir=True):
+ 
+         # check archive file's integrity
+-        if not util.check_file_hash(self.archiveFile, self.archive.sha1sum):
++        if not self.hashes_match():
+             raise Error, _("unpack: check_file_hash failed")
+ 
+         try:
+diff --git a/pisi/specfile.py b/pisi/specfile.py
+index 981e596..c88cbee 100644
+--- a/pisi/specfile.py
++++ b/pisi/specfile.py
+@@ -154,16 +154,34 @@ class ComarProvide:
+ class Archive:
+     s_uri = [autoxml.String, autoxml.mandatory]
+     a_type = [autoxml.String, autoxml.optional]
+-    a_sha1sum = [autoxml.String, autoxml.mandatory]
++    # SHA-1 is no longer collision resistant; recipes should give sha256sum.
++    # Existing recipes only carry sha1sum, so both are accepted, at least
++    # one is required, and every hash that is given has to match.
++    a_sha1sum = [autoxml.String, autoxml.optional]
++    a_sha256sum = [autoxml.String, autoxml.optional]
+     a_target = [autoxml.String, autoxml.optional]
+     a_name = [autoxml.String, autoxml.optional]
+ 
+     def decode_hook(self, node, errs, where):
+         if not self.name:
+             self.name = os.path.basename(self.uri)
++        if not self.sha1sum and not self.sha256sum:
++            errs.append(where + _(": Archive %s has neither sha1sum nor "
++                                  "sha256sum") % self.uri)
++
++    def hashes(self):
++        """(algorithm, expected digest) pairs that the archive must match."""
++        pairs = []
++        if self.sha256sum:
++            pairs.append(("sha256", self.sha256sum))
++        if self.sha1sum:
++            pairs.append(("sha1", self.sha1sum))
++        return pairs
+ 
+     def __str__(self):
+-        s = _('URI: %s, type: %s, sha1sum: %s') % (self.uri, self.type, self.sha1sum)
++        hashes = ", ".join("%s: %s" % (algorithm, digest)
++                           for algorithm, digest in self.hashes())
++        s = _('URI: %s, type: %s, %s') % (self.uri, self.type, hashes)
+         return s
+ 
+ class Source:
+diff --git a/pisi/util.py b/pisi/util.py
+index 7868ba7..c0b1b6f 100644
+--- a/pisi/util.py
++++ b/pisi/util.py
+@@ -451,15 +451,26 @@ def get_file_hashes(top, excludePrefix=None, removePrefix=None):
+             if is_included(root):
+                 yield calculate_hash(root)
+ 
+-def check_file_hash(filename, hash):
+-    """Check the file's integrity with a given hash."""
+-    return sha1_file(filename) == hash
++def check_file_hash(filename, hash, algorithm="sha1"):
++    """Check the file's integrity with a given hash.
++
++    algorithm is "sha1" (the historical default) or "sha256".
++    """
++    return hash_file(filename, algorithm) == hash
+ 
+ def sha1_file(filename):
+     """Calculate sha1 hash of file."""
++    return hash_file(filename, "sha1")
++
++def sha256_file(filename):
++    """Calculate sha256 hash of file."""
++    return hash_file(filename, "sha256")
++
++def hash_file(filename, algorithm):
++    """Calculate the hex digest of a file with a hashlib algorithm name."""
+     # Broken links can cause problem!
+     try:
+-        m = hashlib.sha1()
++        m = hashlib.new(algorithm)
+         f = open(filename, 'rb')
+         while True:
+             # 256 KB seems ideal for speed/memory tradeoff
+@@ -480,7 +491,7 @@ def sha1_file(filename):
+             # Permission denied, the file doesn't have read permissions, skip
+             raise FilePermissionDeniedError(_("You don't have necessary read permissions"))
+         else:
+-            raise FileError(_("Cannot calculate SHA1 hash of %s") % filename)
++            raise FileError(_("Cannot calculate %s hash of %s") % (algorithm.upper(), filename))
+ 
+ def sha1_data(data):
+     """Calculate sha1 hash of given data."""
+diff --git a/tests/archivehashtest.py b/tests/archivehashtest.py
+new file mode 100644
+index 0000000..6f92455
+--- /dev/null
++++ b/tests/archivehashtest.py
+@@ -0,0 +1,102 @@
++# -*- coding: utf-8 -*-
++#
++# Copyright (C) 2026, Pisi Linux Community
++#
++# This program is free software; you can redistribute it and/or modify it under
++# the terms of the GNU General Public License as published by the Free
++# Software Foundation; either version 2 of the License, or (at your option)
++# any later version.
++#
++# Please read the COPYING file.
++#
++
++"""Tests for source archive hashes: sha1sum, sha256sum or both."""
++
++import hashlib
++import os
++import re
++import shutil
++import tempfile
++import unittest
++
++import pisi.specfile as specfile
++import pisi.util as util
++
++TEMPLATE = "repos/repo1/util/misc/spam/pspec.xml"
++PAYLOAD = "pisi archive hash test\n"
++SHA1 = hashlib.sha1(PAYLOAD).hexdigest()
++SHA256 = hashlib.sha256(PAYLOAD).hexdigest()
++
++
++def spec_with_hashes(attributes):
++    """Write the template recipe with the given hash attributes on <Archive>."""
++    text = open(TEMPLATE).read()
++    text = re.sub(r'\s(sha1sum|sha256sum)="[^"]*"', "", text)
++    text = text.replace("<Archive ", "<Archive %s " % attributes, 1)
++    directory = tempfile.mkdtemp()
++    path = os.path.join(directory, "pspec.xml")
++    open(path, "w").write(text)
++    return directory, path
++
++
++class ArchiveHashTestCase(unittest.TestCase):
++
++    def setUp(self):
++        self.directories = []
++        self.payload = tempfile.NamedTemporaryFile(delete=False)
++        self.payload.write(PAYLOAD)
++        self.payload.close()
++
++    def tearDown(self):
++        os.unlink(self.payload.name)
++        for directory in self.directories:
++            shutil.rmtree(directory)
++
++    def read(self, attributes):
++        directory, path = spec_with_hashes(attributes)
++        self.directories.append(directory)
++        spec = specfile.SpecFile()
++        spec.read(path)
++        return spec.source.archive[0]
++
++    def testSha1Only(self):
++        archive = self.read('sha1sum="%s"' % SHA1)
++        self.assertEqual(archive.hashes(), [("sha1", SHA1)])
++
++    def testSha256Only(self):
++        archive = self.read('sha256sum="%s"' % SHA256)
++        self.assertEqual(archive.hashes(), [("sha256", SHA256)])
++
++    def testBothHashesAreChecked(self):
++        archive = self.read('sha1sum="%s" sha256sum="%s"' % (SHA1, SHA256))
++        self.assertEqual(archive.hashes(), [("sha256", SHA256), ("sha1", SHA1)])
++
++    def testNoHashIsRejected(self):
++        self.assertRaises(Exception, self.read, "")
++
++    def testFileHashing(self):
++        self.assertEqual(util.sha1_file(self.payload.name), SHA1)
++        self.assertEqual(util.sha256_file(self.payload.name), SHA256)
++        self.assertTrue(util.check_file_hash(self.payload.name, SHA1))
++        self.assertTrue(util.check_file_hash(self.payload.name, SHA256, "sha256"))
++        self.assertFalse(util.check_file_hash(self.payload.name, SHA1, "sha256"))
++
++    def testSourceArchiveMatching(self):
++        import pisi.sourcearchive as sourcearchive
++        for attributes, expected in (
++                ('sha256sum="%s"' % SHA256, True),
++                ('sha1sum="%s" sha256sum="%s"' % (SHA1, SHA256), True),
++                ('sha1sum="%s" sha256sum="%s"' % (SHA1, "0" * 64), False),
++                ('sha1sum="%s"' % ("0" * 40), False)):
++            class Source(sourcearchive.SourceArchive):
++                # skip the real constructor: it prepares a download location
++                def __init__(self):
++                    pass
++            source = Source()
++            source.archive = self.read(attributes)
++            source.archiveFile = self.payload.name
++            self.assertEqual(source.hashes_match(), expected, attributes)
++
++
++if __name__ == "__main__":
++    unittest.main()

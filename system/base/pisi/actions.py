@@ -19,6 +19,11 @@ def install():
 
     pisitools.dosym("pisi-cli", "/usr/bin/pisi")
 
+    # The sources carry one reference configuration per architecture
+    # (pisi.conf-x86_64, pisi.conf-i686, pisi.conf-aarch64); install the
+    # one for the architecture this package is built for.
+    pisitools.insinto("/etc/pisi", "pisi.conf-%s" % get.ARCH(), "pisi.conf")
+
     shelltools.touch("LOCK")
     shelltools.chmod("LOCK", 0o666)
     pisitools.dodir("/run/lock/files.ldb")

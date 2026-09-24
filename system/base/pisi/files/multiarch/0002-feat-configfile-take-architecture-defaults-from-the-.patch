@@ -1,0 +1,159 @@
+From 7827455acc3df32a6cd2ab8c8b795681b1e9419a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Yank=C4=B1=20K=C3=BC=C3=A7=C3=BCk?=
+ <kendinikertenkelebek@me.com>
+Date: Thu, 24 Sep 2026 18:59:35 +0300
+Subject: [PATCH 2/6] feat(configfile): take architecture defaults from the
+ machine
+
+Without a value in pisi.conf, PiSi assumed an i686 Pardus 2009 machine:
+architecture i686, host i686-pc-linux-gnu, -march=i686 flags with
+-fomit-frame-pointer. setup.py writes these defaults into a fresh
+pisi.conf, so a new installation on any other machine started with wrong
+values.
+
+The architecture, host, cflags and cxxflags defaults now come from the
+architecture table for the machine PiSi runs on; values set in pisi.conf
+still win. The commented example at the top of the file shows x86_64.
+
+pisi.conf-aarch64 joins pisi.conf-x86_64 and pisi.conf-i686 as a reference
+configuration: armv8-a flags, the aarch64-pc-linux-gnu triplet and no
+ignored build types (emul32 is skipped automatically, see the build
+commit).
+
+configfiletest expected the old i686 default and now expects the
+machine's architecture.
+---
+ pisi.conf-aarch64       | 50 +++++++++++++++++++++++++++++++++++++++++
+ pisi/configfile.py      | 19 ++++++++++------
+ tests/configfiletest.py |  4 +++-
+ 3 files changed, 65 insertions(+), 8 deletions(-)
+ create mode 100644 pisi.conf-aarch64
+
+diff --git a/pisi.conf-aarch64 b/pisi.conf-aarch64
+new file mode 100644
+index 0000000..8268850
+--- /dev/null
++++ b/pisi.conf-aarch64
+@@ -0,0 +1,50 @@
++[build]
++build_host = localhost
++# buildhelper = None
++commonflags = -mtune=generic -march=armv8-a -O2 -pipe -fstack-protector -D_FORTIFY_SOURCE=2 -g -fPIC
++cflags = %(commonflags)s
++cxxflags = %(commonflags)s
++host = aarch64-pc-linux-gnu
++cc = %(host)s-gcc
++cxx = %(host)s-g++
++compressionlevel = 9
++enableSandbox = True
++fallback = http://source.pisilinux.org/1.0
++generateDebug = False
++jobs = -j5
++ldflags = -Wl,-O1 -Wl,-z,relro -Wl,--hash-style=gnu -Wl,--as-needed -Wl,--sort-common
++# emul32 is x86_64-only and skipped automatically (pisi/archinfo.py)
++ignored_build_types =
++
++[directories]
++cache_root_dir = /var/cache/pisi
++archives_dir = %(cache_root_dir)s/archives
++cached_packages_dir = %(cache_root_dir)s/packages
++compiled_packages_dir = %(cache_root_dir)s/packages
++debug_packages_dir = %(cache_root_dir)s/packages-debug
++lib_dir = /var/lib/pisi
++history_dir = %(lib_dir)s/history
++index_dir = %(lib_dir)s/index
++info_dir = %(lib_dir)s/info
++kde_dir = /usr
++lock_dir = /run/lock/subsys
++log_dir = /var/log
++packages_dir = %(lib_dir)s/package
++qt_dir = /usr
++tmp_dir = /var/pisi
++
++[general]
++architecture = aarch64
++autoclean = False
++bandwidth_limit = 0
++destinationdirectory = /
++distribution = PisiLinux
++distribution_release = 2.0
++distribution_id = p2
++# ftp_proxy = None
++# http_proxy = None
++# https_proxy = None
++ignore_delta = False
++ignore_safety = False
++package_cache = False
++package_cache_limit = 0
+diff --git a/pisi/configfile.py b/pisi/configfile.py
+index f3236ea..524a0c3 100644
+--- a/pisi/configfile.py
++++ b/pisi/configfile.py
+@@ -23,12 +23,12 @@
+ #bandwidth_limit = 0
+ #
+ #[build]
+-#host = i686-pc-linux-gnu
++#host = x86_64-pc-linux-gnu   (default: from pisi/archinfo.py for this machine)
+ #generateDebug = False
+ #enableSandbox = False
+ #jobs = "-j3"
+-#CFLAGS= -mtune=generic -march=i686 -O2 -pipe -fomit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2
+-#CXXFLAGS= -mtune=generic -march=i686 -O2 -pipe -fomit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2
++#CFLAGS= -mtune=generic -march=x86-64 -O2 -pipe -fstack-protector -D_FORTIFY_SOURCE=2
++#CXXFLAGS= -mtune=generic -march=x86-64 -O2 -pipe -fstack-protector -D_FORTIFY_SOURCE=2
+ #LDFLAGS= -Wl,-O1 -Wl,-z,relro -Wl,--hash-style=gnu -Wl,--as-needed -Wl,--sort-common
+ #buildhelper = None / ccache / icecream
+ #compressionlevel = 1
+@@ -57,6 +57,11 @@ __trans = gettext.translation('pisi', fallback=True)
+ _ = __trans.ugettext
+ 
+ import pisi
++import pisi.archinfo
++
++# Defaults that depend on the architecture come from the architecture table,
++# for the machine PiSi runs on. An explicit value in pisi.conf still wins.
++_machine = pisi.archinfo.get(pisi.archinfo.machine())
+ 
+ class Error(pisi.Error):
+     pass
+@@ -68,7 +73,7 @@ class GeneralDefaults:
+     distribution = "Pardus"
+     distribution_release = "2009"
+     distribution_id = "p9"
+-    architecture = "i686"
++    architecture = _machine.name
+     http_proxy = os.getenv("HTTP_PROXY") or None
+     https_proxy = os.getenv("HTTPS_PROXY") or None
+     ftp_proxy = os.getenv("FTP_PROXY") or None
+@@ -81,12 +86,12 @@ class GeneralDefaults:
+ class BuildDefaults:
+     """Default values for [build] section"""
+     build_host = "localhost"
+-    host = "i686-pc-linux-gnu"
++    host = _machine.host
+     jobs = "-j3"
+     generateDebug = False
+     enableSandbox = True
+-    cflags = "-mtune=generic -march=i686 -O2 -pipe -fomit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2"
+-    cxxflags = "-mtune=generic -march=i686 -O2 -pipe -fomit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2"
++    cflags = _machine.cflags
++    cxxflags = _machine.cflags
+     ldflags = "-Wl,-O1 -Wl,-z,relro -Wl,--hash-style=gnu -Wl,--as-needed -Wl,--sort-common"
+     buildhelper = None
+     compressionlevel = 1
+diff --git a/tests/configfiletest.py b/tests/configfiletest.py
+index 81f3a55..74daeb4 100644
+--- a/tests/configfiletest.py
++++ b/tests/configfiletest.py
+@@ -39,7 +39,9 @@ class ConfigFileTestCase(unittest.TestCase):
+         cf = self.cf
+         self.assertEqual(cf.dirs.kde_dir, '/usr/kde/4')
+         self.assertEqual(cf.dirs.compiled_packages_dir, '/var/cache/pisi/packages')
+-        self.assertEqual(cf.general.architecture, 'i686')
++        # without a value in pisi.conf the architecture of the machine is used
++        import pisi.archinfo
++        self.assertEqual(cf.general.architecture, pisi.archinfo.machine())
+         self.assertEqual(cf.general.distribution_release, '2009')
+ 
+     def testValuesExists(self):

@@ -31,6 +31,15 @@
             <Patch level="1">kde6-tools.patch</Patch>
             <Patch level="1">kerneltools-kernnel6.patch</Patch>
             <Patch level="1">glibc-upgrade2.patch</Patch>
+            <!-- architecture model (pisi/archinfo.py, get.isX86_64() and
+                 friends, emul32 skipped off x86_64, ExcludeArch aliases)
+                 and sha256sum for archives; see doc/architectures.md -->
+            <Patch level="1">multiarch/0001-feat-archinfo-add-a-table-of-supported-architectures.patch</Patch>
+            <Patch level="1">multiarch/0002-feat-configfile-take-architecture-defaults-from-the-.patch</Patch>
+            <Patch level="1">multiarch/0003-feat-actionsapi-architecture-helpers-for-recipes-ker.patch</Patch>
+            <Patch level="1">multiarch/0004-feat-build-skip-architecture-bound-build-types-compa.patch</Patch>
+            <Patch level="1">multiarch/0005-docs-describe-the-architecture-model.patch</Patch>
+            <Patch level="1">multiarch/0006-feat-specfile-accept-sha256sum-for-source-archives.patch</Patch>
         </Patches>
     </Source>
 
@@ -71,7 +80,6 @@
             <AdditionalFile owner="root" permission="0644" target="/etc/pisi/mirrors.conf">mirrors.conf</AdditionalFile>
             <AdditionalFile owner="root" permission="0644" target="/etc/pisi/sandbox.conf">sandbox.conf</AdditionalFile>
             <AdditionalFile owner="root" permission="0644" target="/usr/share/mime/packages/pisi.xml">pisi.xml</AdditionalFile>
-            <AdditionalFile owner="root" permission="0644" target="/etc/pisi/pisi.conf">pisi.conf</AdditionalFile>
             <AdditionalFile target="/usr/lib/tmpfiles.d/pisi.conf" permission="0644" owner="root">tmpfiles.conf</AdditionalFile>
         </AdditionalFiles>
         <Provides>
@@ -81,6 +89,17 @@
     </Package>
 
     <History>
+        <Update release="31">
+            <Date>2026-09-24</Date>
+            <Version>2.7.2</Version>
+            <Comment>Architecture model and sha256sum support (patches from the yankikucuk/pisi fork); pisi.conf is installed for the build architecture.</Comment>
+            <Type package="pisi">security</Type>
+            <Requires>
+                <Action package="pisi">systemRestart</Action>
+            </Requires>
+            <Name>Yankı Küçük</Name>
+            <Email>kendinikertenkelebek@me.com</Email>
+        </Update>
         <Update release="30">
             <Date>2025-11-03</Date>
             <Version>2.7.2</Version>

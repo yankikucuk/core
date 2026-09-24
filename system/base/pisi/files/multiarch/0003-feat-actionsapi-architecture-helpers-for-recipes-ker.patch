@@ -1,0 +1,101 @@
+From 56d3db532fde4161f310a29ebb68b22ed458cff2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Yank=C4=B1=20K=C3=BC=C3=A7=C3=BCk?=
+ <kendinikertenkelebek@me.com>
+Date: Thu, 24 Sep 2026 18:59:35 +0300
+Subject: [PATCH 3/6] feat(actionsapi): architecture helpers for recipes,
+ kerneltools per architecture
+
+Recipes compared get.ARCH() with string literals ('x86_64', 'i686') to
+decide on multilib, assembly or kernel details; 51 recipes in core and 178
+in main do so. New getters answer those questions from the architecture
+table, so a recipe does not need to know every spelling or every
+architecture:
+
+- get.ARCHINFO(): the full table entry;
+- get.isX86_64(), get.isI686(), get.isAARCH64(), get.isX86();
+- get.kernelARCH(): value for the kernel's ARCH=;
+- get.multilibDIR(): lib32 on x86_64, None elsewhere.
+
+kerneltools used to map only i686 to i386 and always installed
+arch/x86/boot/bzImage; it now takes ARCH= and the image path
+(arch/arm64/boot/Image.gz on aarch64) from the table. Existing x86 kernel
+recipes behave exactly as before.
+---
+ pisi/actionsapi/get.py         | 27 +++++++++++++++++++++++++++
+ pisi/actionsapi/kerneltools.py |  9 +++++----
+ 2 files changed, 32 insertions(+), 4 deletions(-)
+
+diff --git a/pisi/actionsapi/get.py b/pisi/actionsapi/get.py
+index c3433ab..fb1468a 100644
+--- a/pisi/actionsapi/get.py
++++ b/pisi/actionsapi/get.py
+@@ -19,6 +19,7 @@ _ = __trans.ugettext
+ 
+ # PiSi Modules
+ import pisi.actionsapi
++import pisi.archinfo
+ import pisi.context as ctx
+ 
+ # ActionsAPI Modules
+@@ -100,8 +101,34 @@ def srcDIR():
+ # Build Related Functions
+ 
+ def ARCH():
++    """Canonical architecture name from pisi.conf: x86_64, i686 or aarch64."""
+     return generals.architecture
+ 
++def ARCHINFO():
++    """Everything PiSi knows about the target architecture (pisi/archinfo.py)."""
++    return pisi.archinfo.get(generals.architecture)
++
++def isX86_64():
++    return pisi.archinfo.same(ARCH(), "x86_64")
++
++def isI686():
++    return pisi.archinfo.same(ARCH(), "i686")
++
++def isAARCH64():
++    return pisi.archinfo.same(ARCH(), "aarch64")
++
++def isX86():
++    """True on any x86 flavour (x86_64 or i686), e.g. for x86-only assembly."""
++    return isX86_64() or isI686()
++
++def kernelARCH():
++    """Value for the kernel build system's ARCH= variable."""
++    return ARCHINFO().kernel_arch
++
++def multilibDIR():
++    """Directory name for 32-bit libraries on multilib systems (lib32), or None."""
++    return ARCHINFO().multilib_dir
++
+ def HOST():
+     return env.host
+ 
+diff --git a/pisi/actionsapi/kerneltools.py b/pisi/actionsapi/kerneltools.py
+index 935bfde..ff5cac3 100644
+--- a/pisi/actionsapi/kerneltools.py
++++ b/pisi/actionsapi/kerneltools.py
+@@ -71,8 +71,8 @@ def __getModuleFlavour():
+ 
+ 
+ def __getKernelARCH():
+-    """i386 is relevant for our i686 architecture."""
+-    return get.ARCH().replace("i686", "i386")
++    """ARCH= value of the kernel build system (x86_64, i386, arm64)."""
++    return get.kernelARCH()
+ 
+ 
+ def __getSuffix():
+@@ -171,8 +171,9 @@ def install():
+     # Dump kernel version under /etc/kernel
+     dumpVersion()
+ 
+-    # Install kernel image
+-    pisitools.insinto("/boot/", "arch/x86/boot/bzImage", "kernel-%s" % suffix)
++    # Install kernel image; its location in the tree depends on the
++    # architecture (bzImage on x86, the compressed EFI-stub Image on arm64)
++    pisitools.insinto("/boot/", get.ARCHINFO().kernel_image, "kernel-%s" % suffix)
+ 
+     # Install the modules
+     # mod-fw= avoids firmwares from installing
