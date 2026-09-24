@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>GNU utilities to find files</Summary>
         <Description>The GNU Find Utilities are the basic directory searching utilities of the GNU operating system. These programs are typically used in conjunction with other programs to provide modular and powerful directory search and file locating capabilities to other commands.</Description>
-        <Archive sha1sum="e9904d7bd0f1196db19f9a30c4e408a16ffd0e96" type="tarxz">http://ftp.gnu.org/pub/gnu/findutils/findutils-4.11.0.tar.xz</Archive>
+        <Archive sha1sum="e9904d7bd0f1196db19f9a30c4e408a16ffd0e96" type="tarxz">https://ftp.gnu.org/pub/gnu/findutils/findutils-4.11.0.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>gettext</Dependency>
             <Dependency>texinfo</Dependency>

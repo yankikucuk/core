@@ -14,7 +14,7 @@
         <IsA>app:console</IsA>
         <Summary>A document formatting system</Summary>
         <Description>groff is a document formatting system. Groff takes standard text and formatting commands as input and produces formatted output.</Description>
-        <Archive sha1sum="6bba283f8b55b74bbcafd56653876ec5d567de63" type="targz">http://ftp.gnu.org/gnu/groff/groff-1.24.1.tar.gz</Archive>
+        <Archive sha1sum="6bba283f8b55b74bbcafd56653876ec5d567de63" type="targz">https://ftp.gnu.org/gnu/groff/groff-1.24.1.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>texinfo</Dependency>
         </BuildDependencies>

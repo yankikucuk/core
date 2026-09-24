@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>Groovy little assembler</Summary>
         <Description>NASM is the Netwide Assembler, a free portable assembler for the Intel 80x86 microprocessor series.</Description>
-        <Archive sha1sum="dc8d0d4f440e23e308d7cd18c99b332da3e511e6" type="tarxz">http://www.nasm.us/pub/nasm/releasebuilds/3.02/nasm-3.02.tar.xz</Archive>
+        <Archive sha1sum="dc8d0d4f440e23e308d7cd18c99b332da3e511e6" type="tarxz">https://www.nasm.us/pub/nasm/releasebuilds/3.02/nasm-3.02.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>texinfo</Dependency>
         </BuildDependencies>

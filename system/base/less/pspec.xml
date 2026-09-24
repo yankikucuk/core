@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>Excellent text file viewer</Summary>
         <Description>The less utility is a text file browser that resembles more, but has more capabilities. Less allows you to move backwards in the file as well as forwards. Since less doesn't have to read the entire input file before it starts, less starts up more quickly than text editors (for example, vi).</Description>
-        <Archive sha1sum="8bf121e087e017f37553d55c9a89db79eba4bdac" type="targz">http://www.greenwoodsoftware.com/less/less-710.tar.gz</Archive>
+        <Archive sha1sum="8bf121e087e017f37553d55c9a89db79eba4bdac" type="targz">https://www.greenwoodsoftware.com/less/less-710.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>ncurses-devel</Dependency>
         </BuildDependencies>

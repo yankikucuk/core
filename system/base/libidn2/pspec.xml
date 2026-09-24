@@ -14,7 +14,7 @@
         <IsA>library</IsA>
         <Summary>Internationalized Domain Names (IDN) implementation</Summary>
         <Description>GNU Libidn is an implementation of the Stringprep, Punycode and IDNA specifications defined by the IETF Internationalized Domain Names (IDN) working group, used for internationalized domain names. The C library is available under the GNU Lesser General Public License.</Description>
-        <Archive sha1sum="06fe2744b016dfc4a58acc3699644e290eb3d37a" type="targz">http://ftp.gnu.org/gnu/libidn/libidn2-2.3.8.tar.gz</Archive>
+        <Archive sha1sum="06fe2744b016dfc4a58acc3699644e290eb3d37a" type="targz">https://ftp.gnu.org/gnu/libidn/libidn2-2.3.8.tar.gz</Archive>
         <BuildDependencies>
             <Dependency versionFrom="1.0">libunistring-devel</Dependency>
         </BuildDependencies>

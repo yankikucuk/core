@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>GNU awk pattern-matching language</Summary>
         <Description>The awk utility interprets a special-purpose programming language that makes it possible to handle simple data-reformatting jobs with just a few lines of code. It helps you to make changes in various text files wherever certain patterns appear, or extract data from parts of certain lines while discarding the rest. Gawk is the GNU implementation of awk.</Description>
-        <Archive sha1sum="6d0da485c193df794a8d2797dc5819e3c2c1925e" type="tarxz">http://mirrors.kernel.org/gnu/gawk/gawk-5.4.1.tar.xz</Archive>
+        <Archive sha1sum="6d0da485c193df794a8d2797dc5819e3c2c1925e" type="tarxz">https://mirrors.kernel.org/gnu/gawk/gawk-5.4.1.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>gettext</Dependency>
             <Dependency>gmp-devel</Dependency>

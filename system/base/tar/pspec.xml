@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>A GNU file archiving program</Summary>
         <Description>The GNU tar program saves many files together in one archive and can restore individual files (or all of the files) from that archive.</Description>
-        <Archive sha1sum="6b9824c92deddbd7021801515270211f5252fbd8" type="tarxz">http://mirrors.kernel.org/gnu/tar/tar-1.35.tar.xz</Archive>
+        <Archive sha1sum="6b9824c92deddbd7021801515270211f5252fbd8" type="tarxz">https://mirrors.kernel.org/gnu/tar/tar-1.35.tar.xz</Archive>
         <AdditionalFiles>
             <AdditionalFile target="doc/tar.1">tar.1</AdditionalFile>
         </AdditionalFiles>

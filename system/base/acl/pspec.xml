@@ -14,7 +14,7 @@
         <IsA>library</IsA>
         <Summary>Access control list utilities</Summary>
         <Description>acl contains the getfacl and setfacl utilities needed for manipulating access control lists along with the needed libraries.</Description>
-        <Archive sha1sum="2f433ff32b2cf277ff08361e482ed03fe4be6b0d" type="targz">http://download.savannah.gnu.org/releases/acl/acl-2.4.0.tar.gz</Archive>
+        <Archive sha1sum="2f433ff32b2cf277ff08361e482ed03fe4be6b0d" type="targz">https://download.savannah.gnu.org/releases/acl/acl-2.4.0.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>attr-devel</Dependency>
         </BuildDependencies>

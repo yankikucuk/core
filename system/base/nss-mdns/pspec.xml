@@ -12,7 +12,7 @@
         <IsA>library</IsA>
         <Summary>Name Service Switch module</Summary>
         <Description>Name Service Switch module for Multicast DNS.</Description>
-        <Archive sha1sum="d8610950b8b209e29129a70765449b820bcda1a0" type="targz">http://0pointer.de/lennart/projects/nss-mdns/nss-mdns-0.10.tar.gz</Archive>
+        <Archive sha1sum="d8610950b8b209e29129a70765449b820bcda1a0" type="targz">https://0pointer.de/lennart/projects/nss-mdns/nss-mdns-0.10.tar.gz</Archive>
         <Patches>
             <Patch>nss-mdns-0.8-avahi-socket.patch</Patch>
         </Patches>

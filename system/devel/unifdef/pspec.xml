@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>The unifdef utility selectively processes conditional cpp(1) directives</Summary>
         <Description>The unifdef utility selectively processes conditional cpp(1) directives. It removes from a file both the directives and any additional text that they specify should be removed, while otherwise leaving the file alone.</Description>
-        <Archive sha1sum="37c9de9912d101bdcbd3b581f8c9fab34d23ac2a" type="tarxz">http://dotat.at/prog/unifdef/unifdef-2.11.23.1cca442.tar.xz</Archive>
+        <Archive sha1sum="37c9de9912d101bdcbd3b581f8c9fab34d23ac2a" type="tarxz">https://dotat.at/prog/unifdef/unifdef-2.11.23.1cca442.tar.xz</Archive>
     </Source>
 
     <Package>

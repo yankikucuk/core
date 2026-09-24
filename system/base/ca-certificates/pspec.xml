@@ -11,7 +11,7 @@
         <IsA>app:web</IsA>
         <Summary>Common CA certificates</Summary>
         <Description>Common CA certificates</Description>
-        <Archive sha1sum="1f5f67a526d68876dadd89c049c9e817dc092249" type="tarxz">http://ftp.debian.org/debian/pool/main/c/ca-certificates/ca-certificates_20260601.tar.xz</Archive>
+        <Archive sha1sum="1f5f67a526d68876dadd89c049c9e817dc092249" type="tarxz">https://ftp.debian.org/debian/pool/main/c/ca-certificates/ca-certificates_20260601.tar.xz</Archive>
     <BuildDependencies>
             <Dependency>python3</Dependency>
             <Dependency>python3-cryptography</Dependency>

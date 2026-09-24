@@ -9,7 +9,7 @@
         <License>GPLv2+</License>
         <Summary>run scripts or programs in a directory</Summary>
         <Description>run scripts or programs in a directory</Description>
-        <Archive sha1sum="0c05bedb11d1db6aa404065cf9d8db65d58730f2" type="tarxz">http://old.kali.org/kali/pool/main/d/debianutils/debianutils_4.9.1.tar.xz</Archive>
+        <Archive sha1sum="0c05bedb11d1db6aa404065cf9d8db65d58730f2" type="tarxz">https://old.kali.org/kali/pool/main/d/debianutils/debianutils_4.9.1.tar.xz</Archive>
     </Source>
     
     <Package>

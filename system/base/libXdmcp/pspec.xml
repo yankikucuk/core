@@ -12,7 +12,7 @@
         <IsA>library</IsA>
         <Summary>X.Org Xdmcp library</Summary>
         <Description>LibXdmcp is the X Display Manager Control Protocol library.</Description>
-        <Archive sha1sum="3ba60ff5118fabcf5e4e25580c76c4090fc4d5a8" type="tarxz">http://xorg.freedesktop.org/archive/individual/lib/libXdmcp-1.1.5.tar.xz</Archive>
+        <Archive sha1sum="3ba60ff5118fabcf5e4e25580c76c4090fc4d5a8" type="tarxz">https://xorg.freedesktop.org/archive/individual/lib/libXdmcp-1.1.5.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>libxslt</Dependency>
             <Dependency>util-macros</Dependency>

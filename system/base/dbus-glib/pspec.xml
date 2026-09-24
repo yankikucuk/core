@@ -13,7 +13,7 @@
         <IsA>library</IsA>
         <Summary>Glib bindings for D-Bus</Summary>
         <Description>dbus-glib is an add-on library to integrate the standard D-Bus library with the GLib thread abstraction and main loop.</Description>
-        <Archive sha1sum="b15e8484722f1504c69e174b134bd75c5036f90d" type="targz">http://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.114.tar.gz</Archive>
+        <Archive sha1sum="b15e8484722f1504c69e174b134bd75c5036f90d" type="targz">https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.114.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>python3</Dependency>
             <Dependency>gtk-doc</Dependency>

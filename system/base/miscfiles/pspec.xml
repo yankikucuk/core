@@ -12,7 +12,7 @@
         <IsA>data</IsA>
         <Summary>Miscellaneous files</Summary>
         <Description>miscfiles is a collection of data files for freely available information, like airport, country, currencies, city information, and codes. It also includes the Unicode character database.</Description>
-        <Archive sha1sum="c96420756b4ee5e02ffedf2e185b0f147e16db14" type="targz">http://ftp.gnu.org/gnu/miscfiles/miscfiles-1.5.tar.gz</Archive>
+        <Archive sha1sum="c96420756b4ee5e02ffedf2e185b0f147e16db14" type="targz">https://ftp.gnu.org/gnu/miscfiles/miscfiles-1.5.tar.gz</Archive>
     </Source>
 
     <Package>

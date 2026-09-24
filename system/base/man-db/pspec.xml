@@ -14,7 +14,7 @@
         <IsA>data:doc</IsA>
         <Summary>Application to read Linux man pages</Summary>
         <Description>Man package consists of programs which is used to read most of the documentation available in linux system. For example, you can write "man nameoftheprogram" into the konsole or "man:nameoftheprogram" into the konqueror to get a detailed usage information for many programs.</Description>
-        <Archive sha1sum="f4ca21be6b6b75a83601f7589f57e3e0a57b5e06" type="tarxz">http://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz</Archive>
+        <Archive sha1sum="f4ca21be6b6b75a83601f7589f57e3e0a57b5e06" type="tarxz">https://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>less</Dependency>
             <Dependency>gzip</Dependency>

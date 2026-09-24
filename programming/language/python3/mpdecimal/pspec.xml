@@ -13,7 +13,7 @@
         <IsA>app:console</IsA>
         <Summary>Package for correctly-rounded arbitrary precision decimal floating point arithmetic</Summary>
         <Description>mpdecimal is a package for correctly-rounded arbitrary precision decimal floating point arithmetic.</Description>
-        <Archive sha1sum="38f001142f227fdcb2a493ab4c922112e5b1d2f2" type="targz">http://www.bytereef.org/software/mpdecimal/releases/mpdecimal-4.0.1.tar.gz</Archive>
+        <Archive sha1sum="38f001142f227fdcb2a493ab4c922112e5b1d2f2" type="targz">https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-4.0.1.tar.gz</Archive>
         <BuildDependencies>
             <Dependency>glibc-devel</Dependency>
         </BuildDependencies>

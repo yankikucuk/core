@@ -12,7 +12,7 @@
         <IsA>library</IsA>
         <Summary>X.Org Au library</Summary>
         <Description>libXau provides functions to manage X authorization files</Description>
-        <Archive sha1sum="5ab09f1f7cfc1962ab9b83b78faad2236989dcad" type="tarxz">http://xorg.freedesktop.org/archive/individual/lib/libXau-1.0.12.tar.xz</Archive>
+        <Archive sha1sum="5ab09f1f7cfc1962ab9b83b78faad2236989dcad" type="tarxz">https://xorg.freedesktop.org/archive/individual/lib/libXau-1.0.12.tar.xz</Archive>
         <Patches>
             <Patch level="1">visibility.patch</Patch>
         </Patches>     

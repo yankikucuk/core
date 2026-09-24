@@ -12,7 +12,7 @@
         <IsA>app:console</IsA>
         <Summary>Tools to make diffs and compare files</Summary>
         <Description>You can use the diff command to show differences between two files, or each corresponding file in two directories. diff outputs differences between files line by line in any of several formats, selectable by command line options.</Description>
-        <Archive sha1sum="c2f302726d2709c6881c4657430a671abe5eedfa" type="tarxz">http://ftp.gnu.org/gnu/diffutils/diffutils-3.12.tar.xz</Archive>
+        <Archive sha1sum="c2f302726d2709c6881c4657430a671abe5eedfa" type="tarxz">https://ftp.gnu.org/gnu/diffutils/diffutils-3.12.tar.xz</Archive>
         <BuildDependencies>
             <Dependency>patch</Dependency>
             <Dependency>texinfo</Dependency>
