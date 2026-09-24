@@ -18,14 +18,9 @@ def setup():
     
     pisitools.flags.add("-fwrapv")
 
-    pisitools.dosed("Lib/cgi.py","^#.* /usr/local/bin/python","#!/usr/bin/python")
-
+    # Only the bundled expat is left to remove: the macOS-only _ctypes
+    # directories (darwin, libffi_osx) were dropped from the source tree.
     shelltools.unlinkDir("Modules/expat")
-    #shelltools.unlinkDir("Modules/zlib")
-    shelltools.unlinkDir("Modules/_ctypes/darwin")
-    #shelltools.unlinkDir("Modules/_ctypes/libffi")
-    #shelltools.unlinkDir("Modules/_ctypes/libffi_msvc")
-    shelltools.unlinkDir("Modules/_ctypes/libffi_osx")
     # shelltools.unlinkDir("Modules/_decimal/libmpdec")
     
     #shelltools.export("CFLAGS", "-I%s/temp/include -O3" %get.workDIR())
@@ -49,11 +44,12 @@ def build():
 
 def install():
     autotools.rawInstall("DESTDIR=%s" % get.installDIR())
-    pisitools.remove("/usr/bin/2to3")
+    # 2to3 and the cgi module were removed from the standard library in 3.13,
+    # so there is nothing to delete or to patch any more.
     pisitools.dodoc("LICENSE", "README.*")
     
-    pisitools.removeDir("/usr/lib/python3.11/idlelib")
-    pisitools.removeDir("/usr/lib/python3.11/tkinter")
-    pisitools.removeDir("/usr/lib/python3.11/turtledemo")
+    pisitools.removeDir("/usr/lib/python3.14/idlelib")
+    pisitools.removeDir("/usr/lib/python3.14/tkinter")
+    pisitools.removeDir("/usr/lib/python3.14/turtledemo")
     pisitools.remove("/usr/bin/idle3*")
-    # pisitools.remove("/usr/lib/libpython3.11.a")
+    # pisitools.remove("/usr/lib/libpython3.14.a")
