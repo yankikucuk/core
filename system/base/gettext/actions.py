@@ -31,7 +31,8 @@ def build():
 def install():
     autotools.rawInstall("DESTDIR=%s docdir=/%s/html" % (get.installDIR(), docdir))
 
-    pisitools.doexe("gettext-tools/misc/gettextize", "/usr/bin")
+    # gettextize moved to gettext-tools/wizard in 1.0 and "make install"
+    # places it in /usr/bin itself; copying it by hand is no longer needed.
 
     # Remove C# & Java stuff
     pisitools.remove("%s/html/examples/build-aux/csharp*" % docdir)
