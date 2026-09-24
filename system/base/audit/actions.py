@@ -27,9 +27,8 @@ def check():
 def install():
     autotools.rawInstall('DESTDIR="%s"' % get.installDIR())
 
-    # remove RH specific bits
-    pisitools.removeDir("/etc/sysconfig")
-    pisitools.removeDir("/etc/rc.d")
+    # 4.x no longer installs the Red Hat /etc/sysconfig and /etc/rc.d files,
+    # so there is nothing distribution-specific left to remove here.
 
     # Create data directories
     pisitools.dodir("/var/log/audit")
@@ -44,4 +43,4 @@ def install():
     for sbin in shelltools.ls("%s/usr/sbin" % get.installDIR()):
         pisitools.dosym("/usr/sbin/%s" % sbin, "/sbin/%s" % sbin)
 
-    pisitools.dodoc("AUTHORS", "ChangeLog", "THANKS", "README", "COPYING")
+    pisitools.dodoc("AUTHORS", "ChangeLog", "THANKS", "README.md", "COPYING")
