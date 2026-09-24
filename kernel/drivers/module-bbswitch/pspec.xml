@@ -8,6 +8,8 @@
             <Name>Ertuğrul Erata</Name>
             <Email>ertugrulerata@gmail.com</Email>
         </Packager>
+        <!-- switches the discrete GPU of x86 Optimus laptops through ACPI -->
+        <ExcludeArch>aarch64</ExcludeArch>
         <License>GPL</License>
         <IsA>app:gui</IsA>
         <Summary>Kernel module allowing to switch dedicated graphics card on Optimus laptops</Summary>

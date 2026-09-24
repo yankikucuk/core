@@ -8,6 +8,8 @@
             <Name>Ertuğrul Erata</Name>
             <Email>ertugrulerata@gmail.com</Email>
         </Packager>
+        <!-- the VirtualBox host driver is not supported on Linux aarch64 hosts -->
+        <ExcludeArch>aarch64</ExcludeArch>
         <License>GPLv2</License>
         <IsA>driver</IsA>
         <Summary>Kernel modules for VirtualBox</Summary>

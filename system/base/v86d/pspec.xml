@@ -9,6 +9,8 @@
             <Name>PisiLinux Community</Name>
             <Email>admins@pisilinux.org</Email>
         </Packager>
+        <!-- runs x86 real-mode video BIOS code for uvesafb -->
+        <ExcludeArch>aarch64</ExcludeArch>
         <License>GPLv2</License>
         <IsA>service</IsA>
         <Summary>Userspace helper for uvesafb</Summary>

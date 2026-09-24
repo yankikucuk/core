@@ -8,6 +8,8 @@
             <Name>Ertuğrul Erata</Name>
             <Email>ertugrulerata@gmail.com</Email>
         </Packager>
+        <!-- loads Windows x86 NDIS network drivers -->
+        <ExcludeArch>aarch64</ExcludeArch>
         <License>GPLv2</License>
         <IsA>app:console</IsA>
         <IsA>driver</IsA>

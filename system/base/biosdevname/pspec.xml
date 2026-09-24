@@ -8,6 +8,8 @@
             <Name>Serdar Soytetir</Name>
             <Email>kaptan@pisilinux.org</Email>
         </Packager>
+        <!-- names network devices from x86 SMBIOS/PCI BIOS tables -->
+        <ExcludeArch>aarch64</ExcludeArch>
         <License>GPLv2</License>
         <PartOf>system.base</PartOf>
         <IsA>app:gui</IsA>
