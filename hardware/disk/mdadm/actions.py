@@ -9,9 +9,11 @@ from pisi.actionsapi import autotools
 from pisi.actionsapi import pisitools
 from pisi.actionsapi import shelltools
 
-def builddiet():
+# mdadm.static for the initramfs, statically linked against glibc. (It was
+# meant to use dietlibc through $GCC, but mdadm's Makefile only reads $CC,
+# so it has always been a glibc build.)
+def buildstatic():
     autotools.make("clean")
-    shelltools.export("GCC", "diet %s %s %s %s -DHAVE_STDINT_H -Os -static" % (get.CC(), get.CFLAGS(), get.CXXFLAGS(), get.LDFLAGS()))
     autotools.make("CXFLAGS='%s -DNO_LIBUDEV' mdadm.static" % get.CFLAGS())
     #autotools.make("mdassemble.static")
 
@@ -33,7 +35,7 @@ def install():
     # Install config file
     pisitools.insinto("/etc", "documentation/mdadm.conf-example", "mdadm.conf")
 
-    builddiet()
+    buildstatic()
 
     pisitools.dodoc("CHANGELOG*", "COPYING", "documentation/mdadm.conf-example", "misc/*")
 

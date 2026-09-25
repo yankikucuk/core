@@ -13,9 +13,6 @@
         <Summary>Utility to control Linux MD devices (software RAID arrays)</Summary>
         <Description>mdadm is used to create, manage, and monitor Linux MD (software RAID) devices.</Description>
         <Archive sha1sum="f9cb777fb97ba846f4645b1c16b6c2661a4aa6a5" type="targz">https://github.com/md-raid-utilities/mdadm/archive/refs/tags/mdadm-4.6.tar.gz</Archive>
-        <BuildDependencies>
-            <Dependency>dietlibc</Dependency>
-        </BuildDependencies>
         <Patches>
             <Patch level="1">sysmacros.patch</Patch>
 <!--             <Patch level="1">mdadm-4.3-no-udev.patch</Patch> -->

@@ -44,10 +44,4 @@
         <Description xml:lang="tr">İnitramfs içinde kullanılan mantıksal hacim yönetimi için gerekli statik bağlanmış araçlardır.</Description>
     </Package>
 
-    <Package>
-        <Name>dietlibc-libdevmapper</Name>
-        <Summary xml:lang="tr">Statik bağlanmış device-mapper kütüphanesi</Summary>
-        <Description xml:lang="tr">Dietlibc kütüphanesiyle statik derlenmiş device-mapper kütüphanesidir.</Description>
-    </Package>
-
 </PISI>

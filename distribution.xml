@@ -38,5 +38,7 @@
            <Package>openssl-1.1</Package>
            <Package>openssl-1.1-devel</Package>
            <Package>openssl-1.1-32bit</Package>
+           <!-- dietlibc: 2012 snapshot, x86 only, no remaining users -->
+           <Package>dietlibc</Package>
       </Obsoletes>
 </PISI>
