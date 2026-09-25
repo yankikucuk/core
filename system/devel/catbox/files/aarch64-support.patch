@@ -1,0 +1,439 @@
+From: Yankı Küçük <kendinikertenkelebek@me.com>
+Subject: [PATCH] syscall: add aarch64 support
+
+catbox only built on x86: the dispatch table referenced system calls that
+newer architectures do not have (open, creat, mkdir, rename, ...) and the
+tracer read and changed registers through PTRACE_PEEKUSER, PTRACE_GETREGS
+and PTRACE_SETREGS with x86 register names.
+
+- Guard every legacy entry of the dispatch table with its __NR_ macro, so
+  the table builds on architectures that only have the *at variants.
+- Add renameat2, fchmodat2 and openat2 (flags read from struct open_how)
+  when the headers define them. The C library on aarch64 routes rename()
+  through renameat2, and none of the three was checked before on any
+  architecture.
+- Treat mkdirat like mkdir (EEXIST for parents of allowed paths) where no
+  mkdir system call exists, since mkdir() is implemented with mkdirat there.
+- Read system call arguments through PEEK_ARG(). On x86_64 and i386 it
+  expands to the same PTRACE_PEEKUSER call as before. On aarch64 it reads
+  the NT_PRSTATUS register set (x0..x5 arguments, x8 call number).
+- On aarch64 a denied call is skipped by setting NT_ARM_SYSTEM_CALL to -1
+  on syscall entry, and x0 is set to the error code on syscall exit.
+- Fail the build with #error on architectures that have no register
+  layout, instead of silently using the x86_64 one.
+
+The x86_64 and i386 code paths are unchanged apart from the three new
+table entries.
+---
+diff --git a/src/syscall.c b/src/syscall.c
+index 36cdfbd..37add0f 100644
+--- a/src/syscall.c
++++ b/src/syscall.c
+@@ -19,6 +19,11 @@
+ #include <sys/un.h>
+ #include <sys/socket.h>
+ #include <netdb.h>
++#ifdef __aarch64__
++#include <sys/uio.h>
++#include <elf.h>
++#include <asm/ptrace.h>
++#endif
+ 
+ #define UNIX_PATH_MAX 108
+ 
+@@ -38,40 +43,72 @@
+ #define AT_FLW_ARG5   1 << 12 // Check fifth argument that contains AT_SYMLINK_FOLLOW flag or not
+ #define AT_NOFLW_ARG5 1 << 13 // Check fitth argument that contains AT_SYMLINK_NOFOLLOW flag or not
+ #define CONNECT_CALL  1 << 14 // System call depends on network allowed flag
++#define OPEN_HOW      1 << 15 // Check the Write mode of the flags in the struct open_how pointed by the third argument
+ 
+ // System call dispatch table
++//
++// Newer architectures (aarch64, riscv64, loongarch64) only provide the *at
++// variants of the path based system calls, so every legacy entry is guarded
++// with its own __NR_ macro. The C library routes open(), mkdir(), rename()
++// etc. through openat, mkdirat, renameat2 etc. there, which are all listed below.
+ static struct syscall_def {
+ 	int no;
+ 	const char *name;
+ 	unsigned int flags;
+ } system_calls[] = {
++#ifdef __NR_open
+ 	{ __NR_open,       "open",       CHECK_PATH | OPEN_MODE },
++#endif
++#ifdef __NR_creat
+ 	{ __NR_creat,      "creat",      CHECK_PATH },
++#endif
+ 	{ __NR_truncate,   "truncate",   CHECK_PATH },
+ #ifdef __i386__
+ 	{ __NR_truncate64, "truncate64", CHECK_PATH },
+ #endif
++#ifdef __NR_unlink
+ 	{ __NR_unlink,     "unlink",     CHECK_PATH | DONT_FOLLOW },
++#endif
++#ifdef __NR_link
+ 	{ __NR_link,       "link",       CHECK_PATH | CHECK_PATH2 },
++#endif
++#ifdef __NR_symlink
+ 	{ __NR_symlink,    "symlink",    CHECK_PATH2 | DONT_FOLLOW },
++#endif
++#ifdef __NR_rename
+ 	{ __NR_rename,     "rename",     CHECK_PATH | CHECK_PATH2 },
++#endif
++#ifdef __NR_mknod
+ 	{ __NR_mknod,      "mknod",      CHECK_PATH },
++#endif
++#ifdef __NR_chmod
+ 	{ __NR_chmod,      "chmod",      CHECK_PATH | LOG_MODE },
++#endif
++#ifdef __NR_lchown
+ 	{ __NR_lchown,     "lchown",     CHECK_PATH | LOG_MODE | DONT_FOLLOW },
++#endif
++#ifdef __NR_chown
+ 	{ __NR_chown,      "chown",      CHECK_PATH | LOG_OWNER },
++#endif
+ #ifdef __i386__
+ 	{ __NR_lchown32,   "lchown32",   CHECK_PATH | LOG_OWNER | DONT_FOLLOW },
+ 	{ __NR_chown32,    "chown32",    CHECK_PATH | LOG_OWNER },
+ #endif
++#ifdef __NR_mkdir
+ 	{ __NR_mkdir,      "mkdir",      CHECK_PATH },
++#endif
++#ifdef __NR_rmdir
+ 	{ __NR_rmdir,      "rmdir",      CHECK_PATH },
++#endif
+ 	{ __NR_mount,      "mount",      CHECK_PATH },
+ #ifndef __i386__
+ 	{ __NR_umount2,    "umount",     CHECK_PATH },
+ #else
+ 	{ __NR_umount,     "umount",     CHECK_PATH },
+ #endif
++#ifdef __NR_utime
+ 	{ __NR_utime,      "utime",      CHECK_PATH },
++#endif
+ 	{ __NR_getuid,     "getuid",     FAKE_ID },
+ 	{ __NR_geteuid,    "geteuid",    FAKE_ID },
+ 	{ __NR_getgid,     "getgid",     FAKE_ID },
+@@ -91,7 +128,9 @@ static struct syscall_def {
+ #endif
+ 	{ __NR_unlinkat,   "unlinkat",   AT_FAMILY_12 | DONT_FOLLOW},
+ 	{ __NR_mknodat,    "mknodat",    AT_FAMILY_12},
++#ifdef __NR_renameat
+ 	{ __NR_renameat,   "renameat",   AT_FAMILY_12 | AT_FAMILY_34},
++#endif
+ 	{ __NR_openat,     "openat",     AT_FAMILY_12 | OPEN_MODE},
+ 	{ __NR_linkat,     "linkat",     AT_FAMILY_12 | AT_FAMILY_34 | AT_FLW_ARG5},
+ 	{ __NR_utimensat,  "utimensat",  AT_FAMILY_12 | AT_NOFLW_ARG4},
+@@ -99,16 +138,30 @@ static struct syscall_def {
+ 	{ __NR_symlinkat,  "symlinkat",  AT_FAMILY_23 | DONT_FOLLOW},
+ 	{ __NR_fchmodat,   "fchmodat",   AT_FAMILY_12 | AT_NOFLW_ARG4 | LOG_MODE},
+ 	{ __NR_fchownat,   "fchownat",   AT_FAMILY_12 | AT_NOFLW_ARG5 | LOG_OWNER},
++	// Later additions of the *at family. Without them a process could
++	// rename, chmod or open for writing outside the sandbox unnoticed.
++#ifdef __NR_renameat2
++	{ __NR_renameat2,  "renameat2",  AT_FAMILY_12 | AT_FAMILY_34},
++#endif
++#ifdef __NR_fchmodat2
++	{ __NR_fchmodat2,  "fchmodat2",  AT_FAMILY_12 | AT_NOFLW_ARG4 | LOG_MODE},
++#endif
++#ifdef __NR_openat2
++	{ __NR_openat2,    "openat2",    AT_FAMILY_12 | OPEN_HOW},
++#endif
+ 
+ 	{ 0, NULL, 0 }
+ };
+ 
+-// Architecture dependent register offsets
++// Architecture dependent register access
++//
++// PEEK_ARG(pid, REG_ARGn) returns the n-th system call argument of the
++// stopped tracee. It is only valid at the syscall entry stop: on aarch64
++// the first argument register (x0) is overwritten by the return value.
+ 
+-#define OFFSET_OF_REG(x) offsetof(struct user_regs_struct, x)
+-
+-#ifndef __i386__
++#if defined(__x86_64__)
+ // x64
++#define OFFSET_OF_REG(x) offsetof(struct user_regs_struct, x)
+ #define REG_ARG1 OFFSET_OF_REG(rdi)
+ #define REG_ARG2 OFFSET_OF_REG(rsi)
+ #define REG_ARG3 OFFSET_OF_REG(rdx)
+@@ -116,8 +169,10 @@ static struct syscall_def {
+ #define REG_ARG5 OFFSET_OF_REG(r8)
+ #define REG_CALL orig_rax
+ #define REG_ERROR rax
+-#else
++#define PEEK_ARG(pid, reg) ptrace(PTRACE_PEEKUSER, pid, reg, 0)
++#elif defined(__i386__)
+ // i386
++#define OFFSET_OF_REG(x) offsetof(struct user_regs_struct, x)
+ #define REG_ARG1 OFFSET_OF_REG(ebx)
+ #define REG_ARG2 OFFSET_OF_REG(ecx)
+ #define REG_ARG3 OFFSET_OF_REG(edx)
+@@ -125,6 +180,44 @@ static struct syscall_def {
+ #define REG_ARG5 OFFSET_OF_REG(edi)
+ #define REG_CALL orig_eax
+ #define REG_ERROR eax
++#define PEEK_ARG(pid, reg) ptrace(PTRACE_PEEKUSER, pid, reg, 0)
++#elif defined(__aarch64__)
++// aarch64
++//
++// arm64 has no PTRACE_PEEKUSER / PTRACE_GETREGS / PTRACE_SETREGS, the
++// general purpose registers are only reachable as the NT_PRSTATUS register
++// set (struct user_pt_regs). Arguments are passed in x0..x5 and the system
++// call number in x8. REG_ARGn is therefore an index into regs[].
++#define REG_ARG1 0
++#define REG_ARG2 1
++#define REG_ARG3 2
++#define REG_ARG4 3
++#define REG_ARG5 4
++#define REG_CALL 8
++#define REG_ERROR 0
++#define PEEK_ARG(pid, reg) peek_arm64_reg(pid, reg)
++
++static int
++get_arm64_regs(pid_t pid, struct user_pt_regs *regs)
++{
++	struct iovec iov;
++
++	iov.iov_base = regs;
++	iov.iov_len = sizeof(*regs);
++	return ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov);
++}
++
++static long
++peek_arm64_reg(pid_t pid, int index)
++{
++	struct user_pt_regs regs;
++
++	if (get_arm64_regs(pid, &regs) == -1)
++		return -1;
++	return (long) regs.regs[index];
++}
++#else
++#error "catbox: unsupported architecture, add its system call register layout to syscall.c"
+ #endif
+ 
+ static char *
+@@ -197,13 +290,18 @@ path_arg_writable(struct trace_context *ctx, pid_t pid, char *path, const char *
+ 	canonical = catbox_paths_canonical(pid, path, dont_follow);
+ 	if (canonical) {
+ 		mkdir_case = strcmp("mkdir", name) == 0;
++#ifndef __NR_mkdir
++		// Without a legacy mkdir system call the C library implements
++		// mkdir() with mkdirat, which must get the same treatment.
++		mkdir_case = mkdir_case || strcmp("mkdirat", name) == 0;
++#endif
+ 		ret = path_writable(ctx->pathlist, canonical, mkdir_case);
+ 		if (ret == 0) {
+ 			if (strcmp("open", name) == 0) {
+ 				// Special case for kernel build
+ 				unsigned int flags;
+ 				struct stat st;
+-				flags = ptrace(PTRACE_PEEKUSER, pid, REG_ARG2, 0);
++				flags = PEEK_ARG(pid, REG_ARG2);
+ 				if ((flags & O_CREAT) == 0 && stat(canonical, &st) == -1 && errno == ENOENT) {
+ 					free(canonical);
+ 					return ENOENT;
+@@ -271,10 +369,10 @@ found:
+ 	name = system_calls[i].name;
+ 
+ 	if (flags & CHECK_PATH) {
+-		arg = ptrace(PTRACE_PEEKUSER, pid, REG_ARG1, 0);
++		arg = PEEK_ARG(pid, REG_ARG1);
+ 		path = get_str(pid, arg);
+ 		if (flags & OPEN_MODE) {
+-			oflags = ptrace(PTRACE_PEEKUSER, pid, REG_ARG2, 0);
++			oflags = PEEK_ARG(pid, REG_ARG2);
+ 			if (!(oflags & O_WRONLY || oflags & O_RDWR)) return 0;
+ 		}
+ 		ret = path_arg_writable(ctx, pid, path, name, flags & DONT_FOLLOW);
+@@ -282,37 +380,46 @@ found:
+ 	}
+ 
+ 	if (flags & CHECK_PATH2) {
+-		arg = ptrace(PTRACE_PEEKUSER, pid, REG_ARG2, 0);
++		arg = PEEK_ARG(pid, REG_ARG2);
+ 		path = get_str(pid, arg);
+ 		ret = path_arg_writable(ctx, pid, path, name, flags & DONT_FOLLOW);
+ 		if (ret) return ret;
+ 	}
+ 
+ 	if (flags & AT_FAMILY_12) {
+-		arg = ptrace(PTRACE_PEEKUSER, pid, REG_ARG2, 0);
++		arg = PEEK_ARG(pid, REG_ARG2);
+ 		path = get_str(pid, arg);
+ 
+ 		if(flags & AT_FLW_ARG5) //for linkat() call
+-			at_nofollow = (ptrace(PTRACE_PEEKUSER, pid, REG_ARG5, 0) & AT_SYMLINK_FOLLOW) ? 0 : 1;
++			at_nofollow = (PEEK_ARG(pid, REG_ARG5) & AT_SYMLINK_FOLLOW) ? 0 : 1;
+ 		else if (flags & AT_NOFLW_ARG5) //for fchownat() and fchmodat() calls
+-			at_nofollow = (ptrace(PTRACE_PEEKUSER, pid, REG_ARG5, 0) & AT_SYMLINK_NOFOLLOW) ? 1 : 0;
++			at_nofollow = (PEEK_ARG(pid, REG_ARG5) & AT_SYMLINK_NOFOLLOW) ? 1 : 0;
+ 		else if(flags & AT_NOFLW_ARG4) //for utimensat() call
+-			at_nofollow = (ptrace(PTRACE_PEEKUSER, pid, REG_ARG4, 0) & AT_SYMLINK_NOFOLLOW) ? 1 : 0;
++			at_nofollow = (PEEK_ARG(pid, REG_ARG4) & AT_SYMLINK_NOFOLLOW) ? 1 : 0;
+ 		else
+ 			at_nofollow = flags & DONT_FOLLOW;
+ 
+ 		if (flags & OPEN_MODE) {
+-			oflags = ptrace(PTRACE_PEEKUSER, pid, REG_ARG3, 0);
++			oflags = PEEK_ARG(pid, REG_ARG3);
++			if (!(oflags & O_WRONLY || oflags & O_RDWR)) return 0;
++		}
++
++		if (flags & OPEN_HOW) {
++			// openat2() passes its open flags in the first (64 bit)
++			// member of struct open_how instead of a register.
++			// An unreadable struct reads as -1 and so is checked
++			// like a write, the kernel will reject it with EFAULT anyway.
++			oflags = peek_long(pid, (const void *) PEEK_ARG(pid, REG_ARG3));
+ 			if (!(oflags & O_WRONLY || oflags & O_RDWR)) return 0;
+ 		}
+ 
+ 		if(path[0] != '/' && *path != 0) {
+-			fd = ptrace(PTRACE_PEEKUSER, pid, REG_ARG1, 0);
++			fd = PEEK_ARG(pid, REG_ARG1);
+ 			fdpath = get_pid_fd_path(pid, fd);
+ 			snprintf(at_path, sizeof(at_path), "%s/%s", fdpath, path);
+ 			ret = path_arg_writable(ctx, pid, at_path, name, at_nofollow);
+ 		} else if (path[0] != '/' && *path == 0) {
+-			fd = ptrace(PTRACE_PEEKUSER, pid, REG_ARG1, 0);
++			fd = PEEK_ARG(pid, REG_ARG1);
+ 			fdpath = get_pid_fd_path(pid, fd);
+ 			ret = path_arg_writable(ctx, pid, fdpath, name, at_nofollow);
+ 		} else
+@@ -322,32 +429,32 @@ found:
+ 	}
+ 
+ 	if (flags & AT_FAMILY_23) {
+-		arg = ptrace(PTRACE_PEEKUSER, pid, REG_ARG3, 0);
++		arg = PEEK_ARG(pid, REG_ARG3);
+ 		path = get_str(pid, arg);
+ 
+ 		if(path[0] != '/' && *path != 0) {
+-			fd = ptrace(PTRACE_PEEKUSER, pid, REG_ARG2, 0);
++			fd = PEEK_ARG(pid, REG_ARG2);
+ 			fdpath = get_pid_fd_path(pid, fd);
+ 			snprintf(at_path, sizeof(at_path), "%s/%s", fdpath, path);
+ 			ret = path_arg_writable(ctx, pid, at_path, name, flags & DONT_FOLLOW);
+ 		} else if (path[0] != '/' && *path == 0) {
+-			fd = ptrace(PTRACE_PEEKUSER, pid, REG_ARG2, 0);
++			fd = PEEK_ARG(pid, REG_ARG2);
+ 			fdpath = get_pid_fd_path(pid, fd);
+ 			ret = path_arg_writable(ctx, pid, fdpath, name, flags & DONT_FOLLOW);
+ 		} else
+ 			ret = path_arg_writable(ctx, pid, path, name, flags & DONT_FOLLOW);
+ 		if (ret) return ret;
+ 	} else if (flags & AT_FAMILY_34) {
+-		arg = ptrace(PTRACE_PEEKUSER, pid, REG_ARG4, 0);
++		arg = PEEK_ARG(pid, REG_ARG4);
+ 		path = get_str(pid, arg);
+ 
+ 		if(path[0] != '/' && *path != 0) {
+-			fd = ptrace(PTRACE_PEEKUSER, pid, REG_ARG3, 0);
++			fd = PEEK_ARG(pid, REG_ARG3);
+ 			fdpath = get_pid_fd_path(pid, fd);
+ 			snprintf(at_path, sizeof(at_path), "%s/%s", fdpath, path);
+ 			ret = path_arg_writable(ctx, pid, at_path, name, flags & DONT_FOLLOW);
+ 		} else if (path[0] != '/' && *path == 0) {
+-			fd = ptrace(PTRACE_PEEKUSER, pid, REG_ARG3, 0);
++			fd = PEEK_ARG(pid, REG_ARG3);
+ 			fdpath = get_pid_fd_path(pid, fd);
+ 			ret = path_arg_writable(ctx, pid, fdpath, name, flags & DONT_FOLLOW);
+ 		} else
+@@ -358,7 +465,7 @@ found:
+ 
+     if (flags & CONNECT_CALL && !ctx->network_allowed) {
+         const struct sockaddr_in * connect_to = (const struct sockaddr_in *)
+-                                                    ptrace(PTRACE_PEEKUSER, pid, REG_ARG2, 0);
++                                                    PEEK_ARG(pid, REG_ARG2);
+         unsigned short * family_pos = (void*)&(connect_to->sin_family);
+         unsigned short family = ptrace(PTRACE_PEEKDATA, pid, family_pos, 0) & 0xFFFF;
+         if (family == AF_INET) {
+@@ -398,6 +505,8 @@ found:
+ return 0;
+     //below we only trap changes to owner/mode within the fishbowl. 
+     // The rest are taken care of in the above blocks
++#if defined(__x86_64__) || defined(__i386__)
++    // Unreachable draft code, it uses the x86 only PTRACE_GETREGS request.
+     if(0 & LOG_OWNER) {
+         struct user_regs_struct regs;
+         ptrace(PTRACE_GETREGS, pid, 0, &regs);
+@@ -417,12 +526,14 @@ return 0;
+ //        PyDict_SetItem( dict, PyString_FromString(path), PyInt_FromLong(mode) );
+         return 1;
+     }
++#endif
+     if(0 & FAKE_ID) {
+         return 2;
+     }
+ 	return 0;
+ }
+ 
++#if defined(__x86_64__) || defined(__i386__)
+ void
+ catbox_syscall_handle(struct trace_context *ctx, struct traced_child *kid)
+ {
+@@ -466,3 +577,60 @@ out:
+ 	// continue tracing
+ 	ptrace(PTRACE_SYSCALL, pid, 0, 0);
+ }
++#elif defined(__aarch64__)
++void
++catbox_syscall_handle(struct trace_context *ctx, struct traced_child *kid)
++{
++	int syscall;
++	struct user_pt_regs regs;
++	struct iovec iov;
++	pid_t pid;
++
++	pid = kid->pid;
++	get_arm64_regs(pid, &regs);
++	syscall = regs.regs[REG_CALL];
++
++	if (kid->in_syscall) { // returning from syscall
++		// Changing the call number on arm64 does not touch x8, so a
++		// blocked call is recognized by the error code kept at entry
++		// instead of a magic call number.
++		if (kid->error_code) {
++			// the call was skipped, return our error code
++			regs.regs[REG_ERROR] = (long) kid->error_code;
++			iov.iov_base = &regs;
++			iov.iov_len = sizeof(regs);
++			ptrace(PTRACE_SETREGSET, pid, NT_PRSTATUS, &iov);
++			kid->error_code = 0;
++		}
++		kid->in_syscall = 0;
++	} else { // entering syscall
++		kid->in_syscall = 1;
++		kid->error_code = 0;
++
++		// skip extra sigtrap from execve call
++		if (syscall == __NR_execve) {
++			kid->in_execve = 1;
++			goto out;
++		}
++
++		int ret = handle_syscall(ctx, pid, syscall);
++		if (ret != 0 && !ctx->collect_only) {
++			// The call number lives outside the general purpose
++			// registers on arm64 and can only be changed through
++			// NT_ARM_SYSTEM_CALL. Setting it to -1 makes the kernel
++			// skip the call while still reporting the exit stop,
++			// where x0 is replaced with our error code.
++			int skip_call = -1;
++
++			kid->error_code = ret;
++			kid->orig_call = syscall;
++			iov.iov_base = &skip_call;
++			iov.iov_len = sizeof(skip_call);
++			ptrace(PTRACE_SETREGSET, pid, NT_ARM_SYSTEM_CALL, &iov);
++		}
++	}
++out:
++	// continue tracing
++	ptrace(PTRACE_SYSCALL, pid, 0, 0);
++}
++#endif
