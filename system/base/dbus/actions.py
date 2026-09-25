@@ -10,6 +10,8 @@ from pisi.actionsapi import pisitools
 from pisi.actionsapi import shelltools
 from pisi.actionsapi import mesontools
 
+import os
+
 
 def setup():
     # pisitools.dosed("configure.ac", '(AS_AC_EXPAND\(EXPANDED_LOCALSTATEDIR, )"\$localstatedir"\)', r'\1 "")')
@@ -72,6 +74,15 @@ def install():
         # pisitools.removeDir("/tmp")
         # pisitools.dosed("%s/usr/lib32/pkgconfig/*.pc" % get.installDIR(), "bin32", "bin")
         return
+
+    # The system bus starts services through dbus-daemon-launch-helper, which
+    # must be setuid root and runnable only by the dbus group (gid 101, see
+    # comar/package.py). dbus's install script sets this only when the build
+    # host has a "dbus" user and otherwise just prints a warning, so set it
+    # here: numerically, and chown before chmod (chown clears the setuid bit).
+    helper = "%s/usr/libexec/dbus-daemon-launch-helper" % get.installDIR()
+    os.chown(helper, 0, 101)
+    os.chmod(helper, 04110)
 
     # needs to exist for the system socket
     pisitools.dodir("/run/dbus")
