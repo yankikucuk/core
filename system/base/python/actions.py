@@ -37,7 +37,10 @@ def setup():
     # pisitools.cflags.add("-fwrapv -std=c++17")
     # pisitools.cflags.add("-fwrapv -std=gnu17")
     # gcc15 patch
-    pisitools.cflags.add("-fwrapv ")
+    # mageia/python-2.7.18-gcc15.patch drops asdl.h's own "bool" enum and
+    # relies on C23's built-in bool; say so explicitly (C23 is only the
+    # default from GCC 15 on) so older compilers build it too.
+    pisitools.cflags.add("-fwrapv -std=gnu23")
 
     # no rpath
     pisitools.dosed("configure.ac", "-rpath \$\(LIBDIR\) ")
