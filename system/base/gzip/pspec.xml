@@ -14,6 +14,9 @@
         <Summary>Standard GNU compressor</Summary>
         <Description>gzip (GNU zip) is a popular data compression program written for the GNU project.</Description>
         <Archive sha1sum="e40bf2f5f9782ea0e6278fa757e62be56c88ac4a" type="tarxz">https://ftp.gnu.org/gnu/gzip/gzip-1.15.tar.xz</Archive>
+        <Patches>
+            <Patch level="1">gzip-1.15-aarch64-build.patch</Patch>
+        </Patches>
     </Source>
 
     <Package>
