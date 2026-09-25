@@ -15,7 +15,7 @@
         <IsA>driver</IsA>
         <Summary>A network driver wrapper</Summary>
         <Description>module-ndiswrapper allows you to use Windows XP drivers for WLAN cards without proper Linux drivers.</Description>
-        <Archive sha1sum="b28279ea3354936578006ab9a53aa98662823866" type="targz">http://download.sourceforge.net/ndiswrapper/ndiswrapper-1.63.tar.gz</Archive>
+        <Archive sha1sum="b28279ea3354936578006ab9a53aa98662823866" type="targz">https://download.sourceforge.net/ndiswrapper/ndiswrapper-1.63.tar.gz</Archive>
         <AdditionalFiles>
             <AdditionalFile owner="root" permission="0644" target="dkms.conf">dkms.conf</AdditionalFile>
         </AdditionalFiles>
