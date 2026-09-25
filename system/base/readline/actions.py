@@ -31,11 +31,13 @@ def install():
 
     pisitools.removeDir("/usr/bin")
     
+    # compatibility names for programs linked against readline 7
     pisitools.dosym("/usr/lib/libreadline.so.8", "/usr/lib/libreadline.so.7")
-    pisitools.dosym("/usr/lib32/libreadline.so.8", "/usr/lib32/libreadline.so.7")
-    
     pisitools.dosym("/usr/lib/libhistory.so.8", "/usr/lib/libhistory.so.7")
-    pisitools.dosym("/usr/lib32/libhistory.so.8", "/usr/lib32/libhistory.so.7")
+    # the same for the 32-bit libraries, which only exist with multilib
+    if get.multilibDIR():
+        pisitools.dosym("/usr/lib32/libreadline.so.8", "/usr/lib32/libreadline.so.7")
+        pisitools.dosym("/usr/lib32/libhistory.so.8", "/usr/lib32/libhistory.so.7")
 
     pisitools.dohtml("doc/")
     pisitools.dodoc("CHANGELOG", "CHANGES", "README", "USAGE", "NEWS")
