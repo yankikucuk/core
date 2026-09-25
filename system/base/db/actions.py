@@ -21,6 +21,11 @@ def setup():
     # lists, which GCC 15's default dialect reads as (void); build as C17.
     pisitools.cflags.add("-std=gnu17")
 
+    # The 2013 release ships a config.guess that predates aarch64 ("cannot
+    # guess build type"); use the current one from gnuconfig.
+    for f in ("config.guess", "config.sub"):
+        shelltools.copy("/usr/share/gnuconfig/%s" % f, "../dist/%s" % f)
+
     pisitools.ldflags.add("-Wl,--default-symver -lpthread")
     shelltools.system("../dist/configure \
                        --prefix=/usr \
