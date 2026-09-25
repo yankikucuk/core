@@ -21,7 +21,10 @@ def build():
     MINOR = "7"
     REL = "6"
 
-    shelltools.export("PARDUS_CFLAGS", "%s" % get.CFLAGS())
+    # tcp_wrappers 7.6 (1997) is K&R C: implicit int return types and
+    # unprototyped declarations, both hard errors since GCC 14 in C99 and
+    # later modes; build it as the C dialect it was written in.
+    shelltools.export("PARDUS_CFLAGS", "%s -std=gnu89" % get.CFLAGS())
 
     args = 'REAL_DAEMON_DIR=%s \
             PARDUS_OPT="-fPIC -DPIC -D_REENTRANT -DHAVE_STRERROR -DHAVE_WEAKSYMS -DINET6=1 -Dss_family=__ss_family -Dss_len=__ss_len" \
