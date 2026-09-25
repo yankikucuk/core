@@ -7,7 +7,8 @@
 #       [--passes N] core:system/base/zlib main:programming/...
 #
 # Recipes are named "core:<path>" or "main:<path>"; core is mounted at /work,
-# main at /main, output goes to /out (packages/, logs/, status).
+# main at /main, output goes to /out (packages/, logs/, status). The stage-1
+# packages are expected in /out/stage1-packages for rollbacks.
 #
 # Unlike stage 1, every package that builds is installed into the root right
 # away (with its package scripts), so later recipes link against the rebuilt
@@ -33,6 +34,23 @@ done
 mkdir -p "$OUT/packages" "$OUT/logs"
 touch "$OUT/status"
 
+# PiSi must keep working after every install: its own Python modules and the
+# libraries behind them come from core packages that are being rebuilt.
+pisi_works() {
+    pisi --version > /dev/null &&
+        python -c "import pisi, plyvel, piksemel, pycurl, urlgrabber, comar"
+}
+
+# Reinstall the stage-1 builds of the packages in the given .pisi files.
+restore_stage1() {
+    local file package stage1
+    for file in "$@"; do
+        package=$(basename "$file" | sed -E 's/-[^-]+-[0-9]+-p[0-9]+-[^-]+\.pisi$//')
+        stage1=$(ls "$OUT/stage1-packages/$package"-[0-9]*.pisi 2> /dev/null | tail -1)
+        [ -n "$stage1" ] && pisi install --reinstall --ignore-dependency -y "$stage1"
+    done
+}
+
 build_one() {
     local spec=$1 repo=${1%%:*} recipe=${1#*:} base name build dir result
     case "$repo" in
@@ -52,17 +70,25 @@ build_one() {
         [ -f "$base/$dir/component.xml" ] && cp "$base/$dir/component.xml" "/tmp/stage2/$repo/$dir/"
         dir=$(dirname "$dir")
     done
+    log="$OUT/logs/$repo-$name.log"
+    # retries append, so the first failure's reason is kept
+    echo "===== $(date -u '+%F %T') attempt $spec" >> "$log"
     (
         cd "$build" &&
         pisi build --ignore-safety --ignore-dependency -y pspec.xml
-    ) > "$OUT/logs/$repo-$name.log" 2>&1 || true
+    ) >> "$log" 2>&1 || true
     if ls "$build"/*.pisi > /dev/null 2>&1; then
-        # Install what was built before the next recipe needs it; packages
-        # of other build types (e.g. -32bit) do not exist on aarch64.
-        if pisi install --ignore-dependency -y "$build"/*.pisi >> "$OUT/logs/$repo-$name.log" 2>&1; then
-            result=PASS
-        else
+        # Install what was built before the next recipe needs it.
+        if ! pisi install --ignore-dependency -y "$build"/*.pisi >> "$log" 2>&1; then
             result=INSTALL-FAIL
+        elif ! pisi_works >> "$log" 2>&1; then
+            # A rebuilt library broke PiSi itself (it happened with plyvel
+            # linked against a leveldb the root cannot load). Put the stage-1
+            # packages back and keep going.
+            restore_stage1 "$build"/*.pisi >> "$log" 2>&1
+            result=BREAKS-PISI
+        else
+            result=PASS
         fi
         mv "$build"/*.pisi "$OUT/packages/"
     elif grep -q "avoids this package from building" "$OUT/logs/$repo-$name.log"; then
