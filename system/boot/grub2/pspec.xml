@@ -75,6 +75,7 @@
             <Path fileType="executable">/usr/sbin</Path>
             <Path fileType="library">/usr/lib/grub/i386-pc/</Path>
             <Path fileType="library">/usr/lib/grub/x86_64-efi</Path>
+            <Path fileType="library">/usr/lib/grub/arm64-efi</Path>
             <Path fileType="doc">/usr/share/doc</Path>
             <Path fileType="data">/usr/share/grub</Path>
             <Path fileType="data">/usr/share/info</Path>
