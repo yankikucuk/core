@@ -19,11 +19,17 @@ def setup():
     
     if get.buildTYPE() == "emul32":
         shelltools.export("PKG_CONFIG_PATH","/usr/lib32/pkgconfig")
+        # The 32-bit pass only ships libraries (the tools are removed in
+        # install), but configure would still enable eu-stackprof and
+        # eu-srcfiles because pkg-config reports the 64-bit json-c and
+        # libarchive, and linking them as 32-bit fails.
         options += " --libdir=/usr/lib32 \
                      --bindir=/usr/emul32 \
+                     --disable-stackprof \
+                     --without-libarchive \
                    "
     
-    elif get.ARCH() == "x86_64":
+    else:  # native build, any architecture
         pisitools.flags.add("-fexceptions")
         autotools.autoreconf("-vfi")
 
@@ -54,7 +60,7 @@ def install():
         pisitools.removeDir("/usr/emul32")
         
         
-    elif get.ARCH() == "x86_64":
+    else:  # native build, any architecture
     # Don't remove all the static libs as libebl.a is needed by other packages
         pisitools.remove("/usr/lib/libelf.a")
         pisitools.remove("/usr/lib/libasm.a")
