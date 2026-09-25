@@ -17,9 +17,13 @@ def setup():
     pisitools.flags.add("-U_FORTIFY_SOURCE")
     autotools.autoreconf("-vfi")
     
+    # The recipe has no check(), so the test suite is not built: on aarch64
+    # tests/aarch64-test-frame-record links against symbols that only the
+    # static library exports and breaks the build with --disable-static.
     options = "--enable-shared \
                --libexecdir=%s \
                --disable-static \
+               --disable-tests \
               " % Libdir
               
     if get.buildTYPE() == "emul32":
