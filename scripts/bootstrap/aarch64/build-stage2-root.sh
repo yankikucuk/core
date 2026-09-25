@@ -11,7 +11,7 @@
 #
 # What it does, in order:
 #   1. indexes the stage-1 packages as a local repository;
-#   2. installs every package into an empty root, except the kernel, its
+#   2. installs every package into an empty root, except the kernel image,
 #      modules, firmware and initramfs tools, which a build root does not
 #      need. COMAR is not running here, so package scripts are skipped
 #      (--ignore-comar) and run later inside the root with
@@ -43,10 +43,12 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
-# Not needed to build packages: the kernel image, its modules, firmware,
-# and the initramfs generators initrd and mkinitramfs, which conflict with
-# busybox-mkinitcpio (only one of them can be installed).
-skip = re.compile(r"^(kernel|linux-firmware|module-|rtl88|initrd$|mkinitramfs$)")
+# Not needed to build packages: the kernel image and its documentation,
+# out-of-tree modules, firmware, and the initramfs generators initrd and
+# mkinitramfs, which conflict with busybox-mkinitcpio (only one of them can
+# be installed). kernel-headers (the userspace API headers every C program
+# needs) and kernel-module-headers stay.
+skip = re.compile(r"^(kernel$|kernel-docs$|linux-firmware|module-|rtl88|initrd$|mkinitramfs$)")
 index = ET.parse(sys.argv[1]).getroot()
 names = sorted({package.findtext("Name") for package in index.findall("Package")})
 print(" ".join(name for name in names if not skip.match(name)))
