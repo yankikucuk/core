@@ -12,7 +12,7 @@ FROM debian:trixie
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential autoconf automake autotools-dev libtool pkgconf \
-        gettext intltool texinfo bison flex gawk perl python3 file cpio \
+        gettext autopoint intltool texinfo bison flex gawk perl python3 file cpio \
         xz-utils bzip2 zstd patch curl ca-certificates git \
         libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev libreadline-dev \
         libncurses-dev libffi-dev libexpat1-dev libgdbm-dev liblzma-dev \

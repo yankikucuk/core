@@ -7,7 +7,7 @@ Bu dizin Pisi GNU/Linux'u arm64 (`aarch64`) üzerinde sıfırdan kurmanın ilk a
 | Aşama | Ne yapar | Durum |
 |---|---|---|
 | 0 | Debian arm64 üzerinde Python 2.7 ve PiSi'yi core tariflerinin kendi kaynak ve yamalarıyla kurar. Bu imajdaki `pisi build` emülasyonsuz aarch64 paketi üretir. | Bu dizin |
-| 1 | Aşama 0 ile core'un araç zincirini ve temel paketlerini aarch64 için paketler, boş bir köke kurar. | Sırada |
+| 1 | Aşama 0 ile core'daki tarifleri aarch64 paketlerine dönüştürür (`build-stage1.sh`); sonra bu paketler boş bir köke kurulur. | Derleme betiği hazır |
 | 2 | Aşama 1'de oluşan Pisi kökünün içinde core'u kendisiyle yeniden derler; sonuç, x86-64'teki `pisilinux/chroot` imajının aarch64 karşılığıdır. | Sırada |
 
 ## Aşama 0'ı hazırlamak
@@ -39,3 +39,14 @@ Notlar:
 - PiSi derleyiciyi Pisi triplet'iyle (`aarch64-pc-linux-gnu-gcc`) çağırır; imaj Debian araçlarını bu adlarla da bağlar.
 - `mirrors://` adresleri, pisi tarifinden kopyalanan `mirrors.conf` ile çözülür.
 - SourceForge tarayıcı kimliğiyle gelen isteklere 403 döner; `prepare.py` bu yüzden PiSi'nin indiricisinin kimliğini kullanır.
+
+## Aşama 1: core'u aarch64 için paketlemek
+
+```sh
+docker run -d --name pisi-a64 --platform linux/arm64 \
+    -v "$PWD:/work:ro" -v "$PWD/../stage1:/out" pisi-aarch64-stage0 sleep infinity
+docker exec pisi-a64 /work/scripts/bootstrap/aarch64/build-stage1.sh [tarif ...]
+```
+
+Tarif verilmezse depodaki bütün tarifler derlenir. Paketler `/out/packages`, günlükler `/out/logs`, tarif başına bir sonuç satırı `/out/status` altına yazılır (`PASS`, `FAIL`, `EXCLUDED`). Başarılı tarifler yeniden çalıştırmada atlanır; hatalar düzeltildikçe betik tekrar çalıştırılabilir. `ExcludeArch` taşıyan x86'ya özel paketler `EXCLUDED` olarak işaretlenir, emul32 (32 bit) paketleri aarch64'te derlenmez. Testler bu aşamada atlanır; aşama 2'de, Pisi'nin kendi kütüphaneleriyle yeniden derlenirken çalıştırılır.
+
