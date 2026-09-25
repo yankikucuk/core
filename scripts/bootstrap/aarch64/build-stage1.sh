@@ -26,16 +26,25 @@ for recipe in "$@"; do
     if grep -q "^PASS $recipe\$" "$OUT/status"; then
         continue
     fi
-    rm -rf "/tmp/build/$name" && mkdir -p /tmp/build && cp -r "$WORK/$recipe" "/tmp/build/$name"
+    # /work is read-only, so the recipe is built from a copy. The copy keeps
+    # the repository layout and every component.xml above the recipe:
+    # PiSi takes the package's component (PartOf) from them.
+    build="/tmp/build/$recipe"
+    rm -rf "$build" && mkdir -p "$(dirname "$build")" && cp -r "$WORK/$recipe" "$build"
+    dir=$(dirname "$recipe")
+    while [ "$dir" != . ]; do
+        [ -f "$WORK/$dir/component.xml" ] && cp "$WORK/$dir/component.xml" "/tmp/build/$dir/"
+        dir=$(dirname "$dir")
+    done
     (
-        cd "/tmp/build/$name" &&
+        cd "$build" &&
         # Tests are skipped in stage 1: these packages only seed stage 2,
         # where everything is rebuilt against Pisi's own libraries and tested.
         pisi build --ignore-sandbox --ignore-safety --ignore-dependency \
                    --ignore-check -y pspec.xml
     ) > "$OUT/logs/$name.log" 2>&1
-    if ls "/tmp/build/$name"/*.pisi >/dev/null 2>&1; then
-        mv "/tmp/build/$name"/*.pisi "$OUT/packages/"
+    if ls "$build"/*.pisi >/dev/null 2>&1; then
+        mv "$build"/*.pisi "$OUT/packages/"
         result=PASS
     elif grep -q "avoids this package from building" "$OUT/logs/$name.log"; then
         result=EXCLUDED
@@ -45,5 +54,5 @@ for recipe in "$@"; do
     sed -i "\| $recipe\$|d" "$OUT/status"
     echo "$result $recipe" >> "$OUT/status"
     echo "$result $recipe"
-    rm -rf "/tmp/build/$name" /var/pisi/"$name"-*
+    rm -rf "$build" /var/pisi/"$name"-*
 done
