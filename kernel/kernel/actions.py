@@ -29,7 +29,9 @@ def install():
     kerneltools.install()
     
     # add objtool for external module building and enabled VALIDATION_STACK option
-    pisitools.insinto("/usr/src/linux-headers-%s/tools/objtool" % get.srcVERSION(), "%s/tools/objtool/objtool" % get.curDIR())
+    # (objtool is only built for x86; arm64 kernels do not use it)
+    if get.isX86():
+        pisitools.insinto("/usr/src/linux-headers-%s/tools/objtool" % get.srcVERSION(), "%s/tools/objtool/objtool" % get.curDIR())
 
     # Install kernel headers needed for out-of-tree module compilation
     kerneltools.installHeaders()
