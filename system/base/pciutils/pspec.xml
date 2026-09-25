@@ -13,7 +13,10 @@
         <Summary>Various utilities dealing with the PCI bus</Summary>
         <Description>The PCI Utilities are a collection of programs for inspecting and manipulating configuration of PCI devices.</Description>
         <Archive sha1sum="0cd524a8217ec55c1bd12f35c75b7614e6e070b9" type="tarxz">https://mirrors.edge.kernel.org/pub/software/utils/pciutils/pciutils-3.15.0.tar.xz</Archive>
-        <Archive sha1sum="e2fbb4e81690bc43ea86c71d04bb5b7322632aed" type="binary" target="pciutils-3.15.0">https://github.com/pciutils/pciids/raw/master/pci.ids</Archive>
+        <!-- pci.ids from a fixed pciids commit (2026-04-05): the file on
+             the master branch changes almost daily, so its sha1sum stops
+             matching. Move the commit together with the version. -->
+        <Archive sha1sum="e2fbb4e81690bc43ea86c71d04bb5b7322632aed" type="binary" target="pciutils-3.15.0">https://github.com/pciutils/pciids/raw/bf27e02a5d0046a15adfa8f17c6fcc8521485259/pci.ids</Archive>
         <BuildDependencies>
             <Dependency>eudev-devel</Dependency>
             <Dependency>libkmod-devel</Dependency>
