@@ -50,3 +50,10 @@ docker exec pisi-a64 /work/scripts/bootstrap/aarch64/build-stage1.sh [tarif ...]
 
 Tarif verilmezse depodaki bütün tarifler derlenir. Paketler `/out/packages`, günlükler `/out/logs`, tarif başına bir sonuç satırı `/out/status` altına yazılır (`PASS`, `FAIL`, `EXCLUDED`). Başarılı tarifler yeniden çalıştırmada atlanır; hatalar düzeltildikçe betik tekrar çalıştırılabilir. `ExcludeArch` taşıyan x86'ya özel paketler `EXCLUDED` olarak işaretlenir, emul32 (32 bit) paketleri aarch64'te derlenmez. Testler bu aşamada atlanır; aşama 2'de, Pisi'nin kendi kütüphaneleriyle yeniden derlenirken çalıştırılır.
 
+Aşama 1'de tarifler Debian'ın araçları ve başlıklarıyla derlenir; bu yüzden imaj, core tariflerinin derleme bağımlılıklarının Debian karşılıklarını da kurar ve `/bin/sh`'yi Pisi'deki gibi bash yapar.
+
+İlk tam çalıştırmanın sonucu: 245 tarifin 206'sı aarch64 paketi üretir, 6'sı `ExcludeArch` ile atlanır. Kalan 33 tarifin hiçbiri tarif hatası değildir; aşama 2'de, Pisi'nin kendi paketleriyle kurulan kökte derlenir:
+
+- core'un kendi ürettiği şeyleri isteyenler: kurulu kernel (`/etc/kernel`, klibc ve kernel modülleri), Python 2 modülleri (dbus, pytz, docutils), elogind.
+- Debian ortamından kaynaklananlar: Debian'ın python3'ü modülleri `/usr/local` altına kurar; libtool'u `.la` bağımlılıklarını bağlamaz (gettext); `linux-libc-dev` ile glibc aynı yapıyı iki kez tanımlar (elfutils); GCC 14 C17 varsayar (python); libxml2 ve libgpg-error sürümleri tariflerin istediğinden eskidir.
+- Geliştirme makinesinden erişilemeyen kaynaklar (curl.se, docbook.org).
