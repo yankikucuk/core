@@ -25,8 +25,11 @@ def build():
 def install():
     autotools.install()
 
-    # Create dictionary files
-    shelltools.system("cat /usr/share/cracklib/cracklib-small|%s/usr/sbin/cracklib-packer %s/usr/share/cracklib/pw_dict" % (get.installDIR(),get.installDIR()))
+    # Create dictionary files. Both the word list and the packer's library
+    # come from this build, not from the build host: on a fresh system (a
+    # new architecture's bootstrap) no cracklib is installed yet.
+    shelltools.export("LD_LIBRARY_PATH", "%s/usr/lib" % get.installDIR())
+    shelltools.system("cat %s/usr/share/cracklib/cracklib-small|%s/usr/sbin/cracklib-packer %s/usr/share/cracklib/pw_dict" % (get.installDIR(),get.installDIR(),get.installDIR()))
 
     pisitools.domo("po/tr.po","tr","cracklib.mo")
     pisitools.dodoc("ChangeLog", "README*", "NEWS", "COPYING.LIB", "AUTHORS")
