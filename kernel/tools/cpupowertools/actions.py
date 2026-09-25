@@ -25,5 +25,7 @@ def install():
     shelltools.cd("tools/power/cpupower")
     autotools.install("DESTDIR=%s libdir=/usr/lib mandir=/%s CPUFREQ_BENCH=false" % (get.installDIR(), get.manDIR()))
 
-    pisitools.dobin("debug/%s/centrino-decode" % cpupower_arch)
-    pisitools.dobin("debug/%s/powernow-k8-decode" % cpupower_arch)
+    # built only on x86, see build()
+    if get.isX86():
+        pisitools.dobin("debug/%s/centrino-decode" % cpupower_arch)
+        pisitools.dobin("debug/%s/powernow-k8-decode" % cpupower_arch)
