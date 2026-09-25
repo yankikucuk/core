@@ -90,6 +90,41 @@ def check():
     #Passed. So, re-patch
     #shelltools.system("patch -p1 < openssl-1.0.0-beta4-ca-dir.patch")
 
+def finish_install():
+    """Steps shared by the whole package: run once, after the last pass.
+
+    On x86_64 the _emul32 pass installs last into the same install
+    directory, so these steps run there; on architectures without a 32-bit
+    pass (aarch64) they run at the end of the native pass.
+    """
+    # opebssl-1.1
+    path = "%s/usr/lib/openssl-1.1/pkgconfig" % get.installDIR()
+    for f in shelltools.ls(path): pisitools.dosed("%s/%s" % (path, f), "^(prefix=\/)temp", r"\1usr")
+
+    # opebssl-1.1
+    pisitools.dosym("/usr/lib/openssl-1.1/libssl.so", "/usr/lib/libssl.so.1.1")
+    pisitools.dosym("/usr/lib/openssl-1.1/libcrypto.so", "/usr/lib/libcrypto.so.1.1")
+
+    # Move engines to /usr/lib/openssl/engines
+    pisitools.dodir("/usr/lib/openssl")
+    #pisitools.domove("/usr/lib/engines", "/usr/lib/openssl")
+
+    # Certificate stuff
+    pisitools.dobin("tools/c_rehash")
+
+    # Create needed dirs
+    for cadir in ["misc", "private"]:
+        pisitools.dodir("/etc/ssl/%s" % cadir)
+
+    # No static libs
+    pisitools.remove("/usr/lib/*.a")
+    pisitools.remove("/usr/lib/openssl-1.1/*.a")
+
+    # opebssl-1.1
+    shelltools.move("%s/temp/include/openssl" % get.installDIR(), "%s/usr/include/openssl-1.1" % get.installDIR())
+    shelltools.system("sed -e 's|/include$|/include/openssl-1.1|' -i %s/usr/lib/openssl-1.1/pkgconfig/*.pc" % get.installDIR())
+    pisitools.removeDir("/temp")
+
 def install():
     autotools.rawInstall("DESTDIR=%s MANDIR=/usr/share/man" % get.installDIR())
 
@@ -114,43 +149,21 @@ def install():
         # opebssl-1.1
         path = "%s/usr/lib32/openssl-1.1/pkgconfig" % get.installDIR()
         for f in shelltools.ls(path): pisitools.dosed("%s/%s" % (path, f), "^(prefix=\/)temp", r"\1usr")
-        path = "%s/usr/lib/openssl-1.1/pkgconfig" % get.installDIR()
-        for f in shelltools.ls(path): pisitools.dosed("%s/%s" % (path, f), "^(prefix=\/)temp", r"\1usr")
-
-        # opebssl-1.1
-        pisitools.dosym("/usr/lib/openssl-1.1/libssl.so", "/usr/lib/libssl.so.1.1")
-        pisitools.dosym("/usr/lib/openssl-1.1/libcrypto.so", "/usr/lib/libcrypto.so.1.1")
         pisitools.dosym("/usr/lib32/openssl-1.1/libssl.so", "/usr/lib32/libssl.so.1.1")
         pisitools.dosym("/usr/lib32/openssl-1.1/libcrypto.so", "/usr/lib32/libcrypto.so.1.1")
-
-        # Move engines to /usr/lib/openssl/engines
-        pisitools.dodir("/usr/lib/openssl")
-        #pisitools.domove("/usr/lib/engines", "/usr/lib/openssl")
-
-        # Certificate stuff
-        pisitools.dobin("tools/c_rehash")
-
-
-        # Create needed dirs
-        for cadir in ["misc", "private"]:
-            pisitools.dodir("/etc/ssl/%s" % cadir)
-
-        # No static libs
-        pisitools.remove("/usr/lib/*.a")
-        pisitools.remove("/usr/lib/openssl-1.1/*.a")
-
-        # opebssl-1.1
-        shelltools.move("%s/temp/include/openssl" % get.installDIR(), "%s/usr/include/openssl-1.1" % get.installDIR())
-        shelltools.system("sed -e 's|/include$|/include/openssl-1.1|' -i %s/usr/lib/openssl-1.1/pkgconfig/*.pc" % get.installDIR())
         shelltools.system("sed -e 's|/include$|/include/openssl-1.1|' -i %s/usr/lib32/openssl-1.1/pkgconfig/*.pc" % get.installDIR())
-        pisitools.removeDir("/temp")
+
+        finish_install()
         return
+
     # openssl.1.1
-    else:
-        shelltools.move("%s/temp/bin/openssl" % get.installDIR(), "%s/usr/bin/openssl-1.1" % get.installDIR())
-        shelltools.move("%s/temp/bin/c_rehash" % get.installDIR(), "%s/usr/bin/c_rehash-1.1" % get.installDIR())
+    shelltools.move("%s/temp/bin/openssl" % get.installDIR(), "%s/usr/bin/openssl-1.1" % get.installDIR())
+    shelltools.move("%s/temp/bin/c_rehash" % get.installDIR(), "%s/usr/bin/c_rehash-1.1" % get.installDIR())
 
-
+    # Without a multilib directory no _emul32 pass follows, so this native
+    # pass is the last one and has to finish the package itself.
+    if not get.multilibDIR():
+        finish_install()
 
     pisitools.dohtml("doc/*")
     pisitools.dodoc("CHANGES*", "LICENSE*", "NEWS*", "README*", "doc/*.txt")
