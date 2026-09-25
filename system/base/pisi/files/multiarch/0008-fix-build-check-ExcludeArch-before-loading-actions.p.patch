@@ -1,0 +1,61 @@
+From 340997a8c8e8261ca908cdd45ef22fc3be985429 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Yank=C4=B1=20K=C3=BC=C3=A7=C3=BCk?=
+ <kendinikertenkelebek@me.com>
+Date: Fri, 25 Sep 2026 10:02:12 +0300
+Subject: [PATCH 8/8] fix(build): check ExcludeArch before loading actions.py
+
+Builder.__init__ loads the recipe's actions.py (through set_build_type),
+and only build() checked <ExcludeArch>. Recipes of x86-only packages can
+run x86-specific code at import time: module-broadcom-wl reads the
+installed kernel version at module level, so on aarch64 it failed with
+"Can't find kernel version information file" instead of being reported
+as excluded. Found while building every pisilinux/core recipe natively on
+arm64.
+
+The check moves into check_excluded_architecture(), called in __init__
+before the actions script is loaded and still at the start of build().
+---
+ pisi/operations/build.py | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/pisi/operations/build.py b/pisi/operations/build.py
+index 292bf71..c792642 100644
+--- a/pisi/operations/build.py
++++ b/pisi/operations/build.py
+@@ -228,6 +228,11 @@ class Builder:
+ 
+         self.sourceArchives = pisi.sourcearchive.SourceArchives(self.spec)
+ 
++        # Before actions.py is loaded: some recipes of x86-only packages run
++        # x86-specific code at import time (e.g. read the installed kernel
++        # version), which would fail before an exclusion could be reported.
++        self.check_excluded_architecture()
++
+         self.build_types = self.get_build_types()
+ 
+         # Use an empty string for the default build
+@@ -315,16 +320,20 @@ class Builder:
+             return None
+         return open(stateFile, "r").read()
+ 
+-    def build(self):
+-        """Build the package in one shot."""
+-
++    def check_excluded_architecture(self):
++        """Raise ExcludedArchitectureException when <ExcludeArch> lists this
++        architecture. Aliases count too: arm64 excludes aarch64."""
+         architecture = ctx.config.values.general.architecture
+-        # Aliases count too: <ExcludeArch>arm64</ExcludeArch> excludes aarch64.
+         if pisi.archinfo.excluded(architecture, self.spec.source.excludeArch):
+             raise ExcludedArchitectureException(
+                     _("pspec.xml avoids this package from building for '%s'")
+                     % architecture)
+ 
++    def build(self):
++        """Build the package in one shot."""
++
++        self.check_excluded_architecture()
++
+         ctx.ui.status(_("Building source package: %s")
+                       % self.spec.source.name)
+ 
